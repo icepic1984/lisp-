@@ -21,7 +21,9 @@ public:
    struct invalid_type {};
    struct nil_type {};
 
-   sexpr(){}
+   sexpr(){
+	   set_type(sexpr_type::invalid_type);
+   }
 
    sexpr(nil_type){
 	   set_type(sexpr_type::nil_type);
@@ -46,12 +48,13 @@ public:
    
    sexpr(const sexpr& expr) :
    	   type_field(expr.type_field) {
+	   std::cout << "copy" << std::endl;
    	   switch(expr.type_field){
 	   case sexpr_type::string_type:
 		   new(&s)std::string(expr.s);
    	   	   break;
 	   case sexpr_type::list_type:
-		   new(&l) std::vector<sexpr>();
+		   new(&l) std::vector<sexpr>(expr.l);
 		   break;
 	   case sexpr_type::double_type:
 		   d = expr.d;
@@ -60,12 +63,42 @@ public:
 		   i = expr.i;
 		   break;
    	   }
-   } 
+   }
+   sexpr& operator=(sexpr&& other){
+	   std::cout << "assign move" << std::endl;
+	   this->~sexpr();
+	   type_field = std::move(other.type_field);
+	   switch(other.type_field){
+	   case sexpr_type::integer_type:
+		   i = std::move(other.i);
+		   break;
+	   case sexpr_type::double_type:
+		   d = std::move(other.d);
+		   break;
+	   case sexpr_type::string_type:
+		   new(&s) std::string(std::move(other.s));
+		   break;
+	   case sexpr_type::list_type:
+		   new(&l) std::vector<sexpr>(std::move(other.l));
+		   break;
+	   }
+	   other.type_field = sexpr_type::invalid_type;
+	   return *this;
+   }
+
+   sexpr& operator=(const sexpr& other){
+	   sexpr t(other);
+	   std::swap(*this,t);
+	   return *this;
+   }
+  
+   sexpr(sexpr&& other) noexcept{
+	   std::cout << "move" << std::endl;
+	   *this = std::move(other);
+   }
    
-   sexpr& operator=(const sexpr&) = delete;
-   sexpr(sexpr&&) = delete;
-   sexpr& operator=(sexpr&&) = delete;
    ~sexpr() {
+	   std::cout << "dest" << std::endl;
 	   using string_type = std::string;
 	   using list_type = std::vector<sexpr>;
 	   switch(type_field){
@@ -77,7 +110,19 @@ public:
 		   break;
 	   }
    }
-
+   template <typename T>
+   void push_back(const T& t){
+	   if (type_field == sexpr_type::invalid_type){
+		   set_type(sexpr_type::list_type);
+		   new(&l) std::vector<sexpr>();
+		   l.emplace_back(t); 
+	   } else if (type_field == sexpr_type::list_type) {
+		   l.emplace_back(t);
+	   } else {
+		   throw std::invalid_argument("wrong type");
+	   }
+   }
+ 
    friend std::ostream& operator<<(std::ostream&os, const sexpr& expr);
    
 private:
@@ -108,25 +153,60 @@ std::ostream& operator<<(std::ostream& os, const sexpr& expr)
 		os <<expr.i;
 		break;
 	case sexpr_type::string_type:
-		os <<expr.s;
+		os << "\"" <<expr.s<<"\"";
 		break;
 	case sexpr_type::double_type:
 		os <<expr.d;
 		break;
+	case sexpr_type::list_type:
+		os << "( ";
+		for(auto &iter : expr.l){
+			os << iter << " ";
+		}
+		os << ")";
+		break;
 	}
-
 	return os;
 }
 	
 int main()
 {
-	sexpr exp(100.0);
+	// sexpr a;
+	// sexpr b;
+	// b.push_back(10);
+	// b.push_back(1000);
+	// b.push_back(std::string("fucj"));
+	// a.push_back(std::string("test"));
+	// a.push_back(std::string("abla"));
+	// b.push_back(a);
 
-	sexpr f(exp);
-	std::cout <<f << std::endl;
-	using boost::spirit::utree;
+	// sexpr test = std::move(b);
+	// std::cout << test << std::endl;	
+	// std::cout << b << std::endl;
+
+	sexpr a(std::string("ballo"));
+	sexpr b(std::string("bla"));
+	sexpr c;
+	c.push_back(std::string("test"));
+//	c.push_back(b);
+//	c.push_back(a);
+	sexpr d;
+	
+	a = std::move(b);
+	
+	std::cout << a << std::endl;
+	std::cout << b << std::endl;
+	std::cout << "ende" << std::endl;
+	// using boost::spirit::utree;
 	// utree val;
-	// val.push_back(123);
+	// utree val2(100);
+	// std::cout << val << std::endl;
+	// val.push_back(std::string("hallo"));
+	// val.push_back(100);
+	// val.push_back(100);
+	// val.push_back(val2);
+	// std::cout << val<< std::endl;
+	// std::cout << val2 << std::endl;
 	// val.push_back("Chuckie");
 	// utree val2;
 	// val2.push_back(123.456);
