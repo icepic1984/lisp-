@@ -230,14 +230,11 @@ std::pair<sexpr,Iter> parse_helper(Iter begin, Iter end)
 	   throw std::invalid_argument("Syntax error");
 	auto token = *begin++;
 	if(token == "("){
-		std::cout << "R:";
 		sexpr expr;
 		while(*begin != ")"){
-			std::cout <<"While:"<< *begin << std::endl;
 			auto tmp = parse_helper(begin,end);
 			if(tmp.second == end)
 			   throw std::invalid_argument("Syntax error");
-			std::cout << "B: "<<tmp.first << std::endl;
 			expr.push_back(tmp.first);
 			begin = tmp.second;
 		}
@@ -266,7 +263,7 @@ expressions_t parse(const tokens_t& tokens)
 int main()
 {
 
-	auto t = tokenize("((hallo))(ha j hh)((erer er (erer )");
+	auto t = tokenize("(defun hello (n) (if (= n 0) n (hello (- n 1))))");
 	auto s = parse(t);
 	std::cout << s.back() << std::endl;	
 //	tokenize(std::string("  hallo"));
