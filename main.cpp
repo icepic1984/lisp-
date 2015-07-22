@@ -49,7 +49,6 @@ public:
    
    sexpr(const sexpr& expr) :
    	   type_field(expr.type_field) {
-	   std::cout << "copy" << std::endl;
    	   switch(expr.type_field){
 	   case sexpr_type::string_type:
 		   new(&s)std::string(expr.s);
@@ -66,7 +65,6 @@ public:
    	   }
    }
    sexpr& operator=(sexpr&& other) noexcept {
-   	   std::cout << "assign move" << std::endl;
    	   this->~sexpr();
    	   type_field = std::move(other.type_field);
    	   switch(other.type_field){
@@ -88,7 +86,6 @@ public:
    }
 
    sexpr& operator=(const sexpr& other){
-	   std::cout << "Assign" << std::endl;
 	   sexpr t(other);
 	   std::swap(*this,t);
 	   return *this;
@@ -96,7 +93,6 @@ public:
   
    sexpr(sexpr&& other) noexcept:
 	   type_field(std::move(other.type_field)) {
-	   std::cout << "Move construct" << std::endl;
    	   switch(type_field){
    	   case sexpr_type::integer_type:
    		   i = std::move(other.i);
@@ -114,7 +110,6 @@ public:
    }
    
    ~sexpr() {
-	   std::cout << "dest" << std::endl;
 	   using string_type = std::string;
 	   using list_type = std::vector<sexpr>;
 	   switch(type_field){
@@ -199,6 +194,7 @@ bool is_special(char c)
 }
 
 using tokens_t = std::vector<std::string>;
+using expressions_t = std::vector<sexpr>;
 
 tokens_t tokenize(const std::string& str)
 {
@@ -239,6 +235,9 @@ std::pair<sexpr,Iter> parse_helper(Iter begin, Iter end)
 		while(*begin != ")"){
 			std::cout <<"While:"<< *begin << std::endl;
 			auto tmp = parse_helper(begin,end);
+			if(tmp.second == end)
+			   throw std::invalid_argument("Syntax error");
+			std::cout << "B: "<<tmp.first << std::endl;
 			expr.push_back(tmp.first);
 			begin = tmp.second;
 		}
@@ -250,41 +249,43 @@ std::pair<sexpr,Iter> parse_helper(Iter begin, Iter end)
 	}
 }
 	
-sexpr parse(const tokens_t& tokens)
+expressions_t parse(const tokens_t& tokens)
 {
-	auto result = parse_helper(tokens.begin(),tokens.end());
-	   if(tokens.end() != result.second)
-	      throw std::invalid_argument("Syntax error");
-	return result.first;
+	expressions_t expressions;
+	auto start = tokens.begin();
+	auto end = tokens.end();
+	while(start != tokens.end()){
+		auto result = parse_helper(start,end);
+		expressions.push_back(result.first);
+		start = result.second;
+	}
+	return expressions;
 }
 	
 	
 int main()
 {
 
-	auto t = tokenize("(hallo de s (erer (erere) (erer)))");
-	for(auto iter : t)
-	   std::cout << iter<<" ";
-	std::cout << "" << std::endl;
+	auto t = tokenize("((hallo))(ha j hh)((erer er (erer )");
 	auto s = parse(t);
-	std::cout << s << std::endl;	
+	std::cout << s.back() << std::endl;	
 //	tokenize(std::string("  hallo"));
-	sexpr a;
-	a.push_back("hallo");
-	a.push_back("de");
-	a.push_back("s");
-	sexpr b;
-	b.push_back("erer");
-	sexpr c;
-	sexpr d ;
-	c.push_back("erere");
-	d.push_back("erer");
-	b.push_back(c);
-	b.push_back(d);
-	a.push_back(b);
+	// sexpr a;
+	// a.push_back("hallo");
+	// a.push_back("de");
+	// a.push_back("s");
+	// sexpr b;
+	// b.push_back("erer");
+	// sexpr c;
+	// sexpr d ;
+	// c.push_back("erere");
+	// d.push_back("erer");
+	// b.push_back(c);
+	// b.push_back(d);
+	// a.push_back(b);
 	
-	sexpr e = std::move(d);
-	std::cout << a << std::endl;
+	// sexpr e = std::move(d);
+	// std::cout << a << std::endl;
 	
 	// sexpr a;
 	// sexpr b;
