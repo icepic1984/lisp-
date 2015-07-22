@@ -1,3 +1,4 @@
+#include <cctype>
 #include <iostream>
 #include <string>
 #include <boost/spirit/include/support_utree.hpp>
@@ -168,9 +169,65 @@ std::ostream& operator<<(std::ostream& os, const sexpr& expr)
 	}
 	return os;
 }
+
+std::pair<bool,char> is_special(char c)
+{
+	if(c == '('){
+		return make_pair(true,'(');
+	} else if (c == ')') {
+		return make_pair(true,')');
+	} else if (c == '\'') {
+		return make_pair(true,'\'');
+	} else {
+	   return make_pair(false,'');
+	}
+}
+
+std::vector<std::string> tokenize(const std::string& str)
+{
+	std::vector<std::string> tokens;
+	auto start = str.begin();
+	while(start != str.end()){
+		if(std::isspace(*start)){
+			++start;
+			continue;
+		} else if (*start == '('){
+			tokens.push_back("(");
+		} else if (*start == ')') {
+			tokens.push_back(")");
+		} else if (*start == '\'') {
+			tokens.push_back("'");
+		} else {
+			std::string tmp;
+			while((start != str.end()) &&
+			      (*start != '(') &&
+			      (*start != ')') &&
+			      !(std::isspace(*start))){
+			   tmp += *start;
+			   ++start;
+			}
+			tokens.push_back(tmp);
+			--start;
+		}
+		++start;
+	}	
+	return tokens;
+}
+
+
+void parse(const std::string& str)
+		{}
+	       
 	
 int main()
 {
+
+	auto t = tokenize(std::string("(halleo'(fuck(erer erer erer ( erer) erer) ) )   "));
+	for(auto &iter : t){
+		std::cout << iter << std::endl;
+	}
+		
+//	tokenize(std::string("  hallo"));
 	// sexpr a;
 	// sexpr b;
 	// b.push_back(10);
@@ -184,19 +241,19 @@ int main()
 	// std::cout << test << std::endl;	
 	// std::cout << b << std::endl;
 
-	sexpr a(std::string("ballo"));
-	sexpr b(std::string("bla"));
-	sexpr c;
-	c.push_back(std::string("test"));
-//	c.push_back(b);
-//	c.push_back(a);
-	sexpr d;
+// 	sexpr a(std::string("ballo"));
+// 	sexpr b(std::string("bla"));
+// 	sexpr c;
+// 	c.push_back(std::string("test"));
+// //	c.push_back(b);
+// //	c.push_back(a);
+	// sexpr d;
 	
-	a = std::move(b);
+	// a = std::move(b);
 	
-	std::cout << a << std::endl;
-	std::cout << b << std::endl;
-	std::cout << "ende" << std::endl;
+	// std::cout << a << std::endl;
+	// std::cout << b << std::endl;
+	// std::cout << "ende" << std::endl;
 	// using boost::spirit::utree;
 	// utree val;
 	// utree val2(100);
