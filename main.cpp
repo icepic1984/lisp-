@@ -65,37 +65,52 @@ public:
 		   break;
    	   }
    }
-   sexpr& operator=(sexpr&& other){
-	   std::cout << "assign move" << std::endl;
-	   this->~sexpr();
-	   type_field = std::move(other.type_field);
-	   switch(other.type_field){
-	   case sexpr_type::integer_type:
-		   i = std::move(other.i);
-		   break;
-	   case sexpr_type::double_type:
-		   d = std::move(other.d);
-		   break;
-	   case sexpr_type::string_type:
-		   new(&s) std::string(std::move(other.s));
-		   break;
-	   case sexpr_type::list_type:
-		   new(&l) std::vector<sexpr>(std::move(other.l));
-		   break;
-	   }
-	   other.type_field = sexpr_type::invalid_type;
-	   return *this;
+   sexpr& operator=(sexpr&& other) noexcept {
+   	   std::cout << "assign move" << std::endl;
+   	   this->~sexpr();
+   	   type_field = std::move(other.type_field);
+   	   switch(other.type_field){
+   	   case sexpr_type::integer_type:
+   		   i = std::move(other.i);
+   		   break;
+   	   case sexpr_type::double_type:
+   		   d = std::move(other.d);
+   		   break;
+   	   case sexpr_type::string_type:
+   		   new(&s) std::string(std::move(other.s));
+   		   break;
+   	   case sexpr_type::list_type:
+   		   new(&l) std::vector<sexpr>(std::move(other.l));
+   		   break;
+   	   }
+   	   other.type_field = sexpr_type::invalid_type;
+   	   return *this;
    }
 
    sexpr& operator=(const sexpr& other){
+	   std::cout << "Assign" << std::endl;
 	   sexpr t(other);
 	   std::swap(*this,t);
 	   return *this;
    }
   
-   sexpr(sexpr&& other) noexcept{
-	   std::cout << "move" << std::endl;
-	   *this = std::move(other);
+   sexpr(sexpr&& other) noexcept:
+	   type_field(std::move(other.type_field)) {
+	   std::cout << "Move construct" << std::endl;
+   	   switch(type_field){
+   	   case sexpr_type::integer_type:
+   		   i = std::move(other.i);
+   		   break;
+   	   case sexpr_type::double_type:
+   		   d = std::move(other.d);
+   		   break;
+   	   case sexpr_type::string_type:
+   		   new(&s) std::string(std::move(other.s));
+   		   break;
+   	   case sexpr_type::list_type:
+   		   new(&l) std::vector<sexpr>(std::move(other.l));
+   		   break;
+   	   }
    }
    
    ~sexpr() {
@@ -170,38 +185,35 @@ std::ostream& operator<<(std::ostream& os, const sexpr& expr)
 	return os;
 }
 
-std::pair<bool,char> is_special(char c)
+bool is_special(char c)
 {
 	if(c == '('){
-		return make_pair(true,'(');
+		return true;
 	} else if (c == ')') {
-		return make_pair(true,')');
+		return true;
 	} else if (c == '\'') {
-		return make_pair(true,'\'');
+		return true;
 	} else {
-	   return make_pair(false,'');
+		return false;
 	}
 }
 
-std::vector<std::string> tokenize(const std::string& str)
+using tokens_t = std::vector<std::string>;
+
+tokens_t tokenize(const std::string& str)
 {
-	std::vector<std::string> tokens;
+	tokens_t tokens;
 	auto start = str.begin();
 	while(start != str.end()){
 		if(std::isspace(*start)){
 			++start;
 			continue;
-		} else if (*start == '('){
-			tokens.push_back("(");
-		} else if (*start == ')') {
-			tokens.push_back(")");
-		} else if (*start == '\'') {
-			tokens.push_back("'");
+		} else if (is_special(*start)) {
+			tokens.push_back(std::string(1,*start));
 		} else {
 			std::string tmp;
 			while((start != str.end()) &&
-			      (*start != '(') &&
-			      (*start != ')') &&
+			      !(is_special(*start)) &&
 			      !(std::isspace(*start))){
 			   tmp += *start;
 			   ++start;
@@ -215,19 +227,65 @@ std::vector<std::string> tokenize(const std::string& str)
 }
 
 
-void parse(const std::string& str)
-		{}
-	       
+template <typename Iter>
+std::pair<sexpr,Iter> parse_helper(Iter begin, Iter end)
+{
+	if(begin == end)
+	   throw std::invalid_argument("Syntax error");
+	auto token = *begin++;
+	if(token == "("){
+		std::cout << "R:";
+		sexpr expr;
+		while(*begin != ")"){
+			std::cout <<"While:"<< *begin << std::endl;
+			auto tmp = parse_helper(begin,end);
+			expr.push_back(tmp.first);
+			begin = tmp.second;
+		}
+		return std::make_pair(expr,++begin);
+	} else if (token == ")") {
+		throw std::invalid_argument("Syntax error");
+	} else {
+		return make_pair(sexpr(token),begin);
+	}
+}
+	
+sexpr parse(const tokens_t& tokens)
+{
+	auto result = parse_helper(tokens.begin(),tokens.end());
+	   if(tokens.end() != result.second)
+	      throw std::invalid_argument("Syntax error");
+	return result.first;
+}
+	
 	
 int main()
 {
 
-	auto t = tokenize(std::string("(halleo'(fuck(erer erer erer ( erer) erer) ) )   "));
-	for(auto &iter : t){
-		std::cout << iter << std::endl;
-	}
-		
+	auto t = tokenize("(hallo de s (erer (erere) (erer)))");
+	for(auto iter : t)
+	   std::cout << iter<<" ";
+	std::cout << "" << std::endl;
+	auto s = parse(t);
+	std::cout << s << std::endl;	
 //	tokenize(std::string("  hallo"));
+	sexpr a;
+	a.push_back("hallo");
+	a.push_back("de");
+	a.push_back("s");
+	sexpr b;
+	b.push_back("erer");
+	sexpr c;
+	sexpr d ;
+	c.push_back("erere");
+	d.push_back("erer");
+	b.push_back(c);
+	b.push_back(d);
+	a.push_back(b);
+	
+	sexpr e = std::move(d);
+	std::cout << a << std::endl;
+	
 	// sexpr a;
 	// sexpr b;
 	// b.push_back(10);
