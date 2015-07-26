@@ -4,6 +4,8 @@ project(lisp++)
 set(CMAKE_CXX_FLAGS "-std=c++14")
 
 set (src
+    sexpr.cpp	
+	parser.cpp
   	main.cpp )
 
 find_package(Boost 1.50.0 REQUIRED COMPONENTS program_options
@@ -14,5 +16,5 @@ include_directories(/home/icepic/Code/spirit/include)
 
 add_definitions(-DBOOST_LOG_DYN_LINK)
 
-add_executable(lisp++ main.cpp)
+add_executable(lisp++ ${src})
 target_link_libraries(lisp++ ${Boost_LIBRARIES})
