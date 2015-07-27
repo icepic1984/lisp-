@@ -55,20 +55,28 @@ expressions_t parse(const tokens_t& tokens)
 
 sexpr atom(const std::string& str)
 {
-	std::regex floating_point("[0-9]*",//\\.?[0-9]+",//\\([eE][-+]?[0-9]+\\)?",
-	                          std::regex::basic);
+	std::regex floating_point("[+-]?[0-9]?\\.[0-9]+([eE][-+]?[0-9]+)?",
+	                          std::regex::extended);
 	std::regex integer("[-+]?[0-9]+",std::regex::extended);
 	if(str == "nil"){
 		return sexpr(sexpr::nil_type{});
+	} else if (str == "t") {
+		return sexpr(true);
+	} else if (str == "f") {
+		return sexpr(false);
 	} else if (std::regex_match(str,floating_point)) {
 		std::cout << "double" << std::endl;
 		return sexpr(stod(str));
 	} else if (std::regex_match(str,integer)) {
 		std::cout << "int" << std::endl;
 	 	return sexpr(stoi(str));
+	} else {
+		return sexpr(str);
 	}
+	// Is never reached
 	return sexpr(sexpr::invalid_type{});
 }
 
 
 	
+

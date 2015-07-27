@@ -33,6 +33,12 @@ struct tag_dispatch<sexpr::invalid_type>
 };
 
 template <>
+struct tag_dispatch<bool>
+{
+   typedef sexpr::bool_type type;
+};
+
+template <>
 struct tag_dispatch<std::vector<sexpr>>
 {
 	typedef sexpr::list_type type;
@@ -84,6 +90,15 @@ struct sexpr_print
    }
 
    template <typename From>
+   result_t dispatch(const From& val,std::ostream& os, sexpr::bool_type){
+	   if(val){
+		   return os <<"<true>"<<" ";
+	   } else {
+		   return os <<"<false>"<<" ";
+	   }
+   }
+
+   template <typename From>
    result_t dispatch(const From& val,std::ostream& os, sexpr::list_type){
 	   os << "( ";
 	   for(auto &iter : val){
@@ -106,6 +121,7 @@ typename F::result_t visit(const sexpr& expr, F f,V&&... v)
 	switch(expr.type_field){
 	case sexpr_type::invalid_type:
 		return f(sexpr::invalid_type{},std::forward<V>(v)...);
+		break;
 	case sexpr_type::nil_type:
 		return f(sexpr::nil_type{},std::forward<V>(v)...);
 		break;
@@ -118,11 +134,107 @@ typename F::result_t visit(const sexpr& expr, F f,V&&... v)
 	case sexpr_type::double_type:
 		return f(expr.d,std::forward<V>(v)...);
 		break;
+	case sexpr_type::bool_type:
+		return f(expr.b,std::forward<V>(v)...);
+		break;
 	default:
 		return f(expr.l,std::forward<V>(v)...);
 		break;
 	}
 }
+
+template <typename F, typename X>
+struct bind_impl 
+{
+   typedef typename F::result_t result_t;
+   X& x; 
+   F f;
+   bind_impl(F f, X& x) : x(x), f(f) {}
+   
+   template <typename Y>
+   typename F::result_t operator()(Y& y) const {
+	   return f(x, y);
+   }
+   
+   template <typename Y>
+   typename F::result_t operator()(Y const& y) const {
+	   return f(x, y);
+   }
+};
+
+template <typename F, typename X>
+bind_impl<F, X const> bind(F f, X const& x)
+{
+	return bind_impl<F, X const>(f, x);
+}
+
+template <typename F, typename X>
+bind_impl<F, X> bind(F f, X& x)
+{
+	return bind_impl<F, X>(f, x);
+}
+
+template <typename F>
+typename F::result_t visit(const sexpr& a, const sexpr& b, F f)
+{
+	switch(a.type_field){
+	case sexpr_type::invalid_type:
+		return visit(b,bind(f,sexpr::invalid_type{}));
+		break;
+	case sexpr_type::nil_type:
+		return visit(b,bind(f,sexpr::nil_type{}));
+		break;
+	case sexpr_type::integer_type:
+		return visit(b,bind(f,a.i));
+		break;
+	case sexpr_type::string_type:
+		return visit(b,bind(f,a.s));
+		break;
+	case sexpr_type::double_type:
+		return visit(b,bind(f,a.d));
+		break;
+	case sexpr_type::bool_type:
+		return visit(b,bind(f,a.b));
+		break;
+	default:
+		return visit(b,bind(f,a.l));
+		break;
+	}
+}
+
+struct sexpr_add
+{
+   typedef sexpr result_t;
+
+   result_t dispatch(double x, double y) const{
+	   return sexpr(x+y);
+   }
+
+   result_t dispatch(double x, const std::vector<sexpr>& y) const {
+	   sexpr tmp(x);
+	   for (auto &iter : y){
+		   tmp = visit(tmp,iter,sexpr_add{});
+	   }
+	   return tmp;
+   }
+
+   result_t dispatch(const std::vector<sexpr>& x, double y) const {
+	   return dispatch(y,x);
+   }
+
+   template <typename A, typename B>
+   result_t dispatch(const A& x, const B& y) const {
+	   throw std::invalid_argument("Shit");
+	   return sexpr{};
+   }
+
+   template <typename A, typename B>
+   result_t operator()(const A& x, const B& y) const {
+	   return dispatch(x,y);
+   }
+};
+
+
 
 template <typename T>
 T sexpr::get() const

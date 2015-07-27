@@ -3,7 +3,7 @@
 #include <string>
 #include "sexpr.hpp"
 #include "parser.hpp"
-
+#include <boost/spirit/include/support_utree.hpp>
    
 int main()
 {
@@ -11,13 +11,30 @@ int main()
 	auto t = tokenize("(defun hello (n) (if (= n 0) n (hello (- n 1))))(hello 10)");
 	auto s = parse(t);
 	std::cout << s[0] << std::endl;
-	std::cout<<atom("111")<<std::endl;
-	auto bla = atom("90");
-	std::cout << bla << std::endl;
-	std::cout << bla.get_type() << std::endl;
-	if(bla.get_type() == sexpr_type::integer_type){
-		std::cout << "hea" << std::endl;
-	}
+	std::cout << atom(".9E+11")<<std::endl;
+	std::cout << atom("100")<<std::endl;
+	std::cout << atom("t") << std::endl;
+	std::cout << atom("f") << std::endl;
+
+	sexpr a;
+	sexpr b(100.0);
+	a.push_back(100.0);
+	a.push_back(200.0);	
+	std::cout<<visit(a,b,sexpr_add {})<<std::endl;
+	                
+	// using boost::spirit::utree;
+	// utree a(100);
+	// utree b(100);
+	// utree::visit(a,b, add{});
+	
+	 // std::cout << val2 << std::endl;
+	 // std::cout<< val2.get<std::string>()<<std::endl;
+	// val.push_back(std::string("hallo"));
+
+	
+
+
+
 	
 	// visit(s[0],[](auto t)
 	//         {

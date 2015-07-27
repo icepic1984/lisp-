@@ -13,7 +13,8 @@ struct sexpr_type
 	   double_type,
 	   list_type,
 	   nil_type,
-	   invalid_type
+	   invalid_type,
+	   bool_type
    };
 };
 
@@ -25,7 +26,8 @@ public:
    struct list_type {};
    struct basic_type {};
    struct string_type {};
-
+   struct bool_type {};
+   
    sexpr();
    
    sexpr(nil_type);
@@ -35,6 +37,8 @@ public:
    sexpr(int i_);
 
    sexpr(double d_);
+
+   sexpr(bool b_);
 
    sexpr(const std::string& s_);
    
@@ -56,6 +60,9 @@ public:
    template <typename F, typename... V>
    friend typename F::result_t visit(const sexpr& expr, F f, V&&... v);
 
+   template <typename F>
+   friend typename F::result_t visit(const sexpr& a, const sexpr& b, F f);
+
    sexpr_type::info get_type();
 
    template <typename T>
@@ -68,8 +75,9 @@ private:
    union 
    {
       int i;
-      std::string s;
       double d;
+      bool b;
+      std::string s;
       std::vector<sexpr> l;
    };
 };

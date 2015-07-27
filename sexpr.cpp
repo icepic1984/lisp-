@@ -17,6 +17,11 @@ sexpr::sexpr(int i_) : i(i_){
 	set_type(sexpr_type::integer_type);
 }
 
+sexpr::sexpr(bool b_) : b(b_)
+{
+	set_type(sexpr_type::bool_type);
+}
+
 sexpr::sexpr(double d_) : d(d_){
 	set_type(sexpr_type::double_type);
 }
@@ -41,6 +46,9 @@ sexpr::sexpr(const sexpr& expr) :
 	case sexpr_type::integer_type:
 		i = expr.i;
 		break;
+	case sexpr_type::bool_type:
+		b = expr.b;
+		break;
 	}
 }
  
@@ -52,6 +60,9 @@ sexpr::sexpr(sexpr&& other) noexcept :
 		break;
 	case sexpr_type::double_type:
 		d = std::move(other.d);
+		break;
+	case sexpr_type::bool_type:
+		b = std::move(other.b);
 		break;
 	case sexpr_type::string_type:
 		new(&s) std::string(std::move(other.s));
@@ -84,6 +95,9 @@ sexpr& sexpr::operator=(sexpr&& other) noexcept {
 		break;
 	case sexpr_type::double_type:
 		d = std::move(other.d);
+		break;
+	case sexpr_type::bool_type:
+		b = std::move(other.b);
 		break;
 	case sexpr_type::string_type:
 		new(&s) std::string(std::move(other.s));
