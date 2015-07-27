@@ -22,6 +22,9 @@ class sexpr
 public:
    struct invalid_type {};
    struct nil_type {};
+   struct list_type {};
+   struct basic_type {};
+   struct string_type {};
 
    sexpr();
    
@@ -50,16 +53,9 @@ public:
 
    friend std::ostream& operator<<(std::ostream& os, const sexpr& expr);
 
-   friend std::ostream& operator<<(std::ostream& os, const nil_type& nil);
+   template <typename F, typename... V>
+   friend typename F::result_t visit(const sexpr& expr, F f, V&&... v);
 
-   friend std::ostream& operator<<(std::ostream& os, const invalid_type& nil);
-   
-   // template <typename F>
-   // friend void visit(const sexpr& expr, F f);
-
-   template <typename F>
-   friend typename F::result_t visit(const sexpr& expr, F f);
-    
    sexpr_type::info get_type();
 
    template <typename T>

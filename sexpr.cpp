@@ -43,7 +43,6 @@ sexpr::sexpr(const sexpr& expr) :
 		break;
 	}
 }
-
  
 sexpr::sexpr(sexpr&& other) noexcept :
 	type_field(std::move(other.type_field)) {
@@ -64,8 +63,8 @@ sexpr::sexpr(sexpr&& other) noexcept :
 }
    
 sexpr::~sexpr() {
-	using string_type = std::string;
-	using list_type = std::vector<sexpr>;
+	typedef std::string string_type;
+	typedef std::vector<sexpr> list_type;
 	switch(type_field){
 	case sexpr_type::string_type:
 		s.~string_type();
@@ -75,6 +74,7 @@ sexpr::~sexpr() {
 		break;
 	}
 }
+
 sexpr& sexpr::operator=(sexpr&& other) noexcept {
 	this->~sexpr();
 	type_field = std::move(other.type_field);
@@ -106,45 +106,7 @@ void sexpr::set_type(sexpr_type::info type)
 {type_field = type;}
 
 std::ostream& operator<<(std::ostream& os, const sexpr& expr)
-{
-	switch(expr.type_field){
-	case sexpr_type::nil_type:
-		os << sexpr::nil_type{};
-		break;
-	case sexpr_type::invalid_type:
-		os << sexpr::invalid_type{};
-		break;
-	case sexpr_type::integer_type:
-		os <<expr.i;
-		break;
-	case sexpr_type::string_type:
-		os << "\"" <<expr.s<<"\"";
-		break;
-	case sexpr_type::double_type:
-		os <<expr.d;
-		break;
-	case sexpr_type::list_type:
-		os << "( ";
-		for(auto &iter : expr.l){
-			os << iter << " ";
-		}
-		os << ")";
-		break;
-	}
-	return os;
-}
-
-std::ostream& operator<<(std::ostream& os, const sexpr::nil_type& nil)
-{
-	os <<"<nil>";
-	return os;
-}
-
-std::ostream& operator<<(std::ostream& os, const sexpr::invalid_type& invalid)
-{
-	os << "<invalid>";
-	return os;
-}
+{return visit(expr,sexpr_print{},os);}
 
 sexpr_type::info sexpr::get_type()
 {return sexpr_type::info(type_field);}

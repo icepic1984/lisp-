@@ -1,4 +1,5 @@
 #include "parser.hpp"
+#include <regex>
 
 bool is_special(char c)
 {
@@ -51,3 +52,23 @@ expressions_t parse(const tokens_t& tokens)
 	}
 	return expressions;
 }
+
+sexpr atom(const std::string& str)
+{
+	std::regex floating_point("[0-9]*",//\\.?[0-9]+",//\\([eE][-+]?[0-9]+\\)?",
+	                          std::regex::basic);
+	std::regex integer("[-+]?[0-9]+",std::regex::extended);
+	if(str == "nil"){
+		return sexpr(sexpr::nil_type{});
+	} else if (std::regex_match(str,floating_point)) {
+		std::cout << "double" << std::endl;
+		return sexpr(stod(str));
+	} else if (std::regex_match(str,integer)) {
+		std::cout << "int" << std::endl;
+	 	return sexpr(stoi(str));
+	}
+	return sexpr(sexpr::invalid_type{});
+}
+
+
+	

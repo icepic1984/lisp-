@@ -1,7 +1,6 @@
 #include <cctype>
 #include <iostream>
 #include <string>
-#include <boost/spirit/include/support_utree.hpp>
 #include "sexpr.hpp"
 #include "parser.hpp"
 
@@ -11,13 +10,15 @@ int main()
 
 	auto t = tokenize("(defun hello (n) (if (= n 0) n (hello (- n 1))))(hello 10)");
 	auto s = parse(t);
-	for(auto &iter : s){
-		std::cout << iter << std::endl;
+	std::cout << s[0] << std::endl;
+	std::cout<<atom("111")<<std::endl;
+	auto bla = atom("90");
+	std::cout << bla << std::endl;
+	std::cout << bla.get_type() << std::endl;
+	if(bla.get_type() == sexpr_type::integer_type){
+		std::cout << "hea" << std::endl;
 	}
-	auto l = s[0].get<expressions_t>();
-	for(auto &iter : l){
-		std::cout << iter << std::endl;
-	}
+	
 	// visit(s[0],[](auto t)
 	//         {
 	// 	        std::cout << t << std::endl;
