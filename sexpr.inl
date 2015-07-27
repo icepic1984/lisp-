@@ -15,36 +15,9 @@ void sexpr::push_back(const T& t){
 	}
 }
  
-// template <typename F>
-// void visit(const sexpr& expr, F f)
-// {
-// 	switch(expr.type_field){
-// 	case sexpr_type::invalid_type:
-// 		f(sexpr::invalid_type{});
-// 		break;
-// 	case sexpr_type::nil_type:
-// 		f(sexpr::nil_type{});
-// 		break;
-// 	case sexpr_type::integer_type:
-// 		f(expr.i);
-// 		break;
-// 	case sexpr_type::string_type:
-// 		f(expr.s);
-// 		break;
-// 	case sexpr_type::double_type:
-// 		f(expr.d);
-// 		break;
-// 	case sexpr_type::list_type:
-// 		for(auto &iter : expr.l)
-// 		   f(iter);
-// 		break;
-// 	}
-// }
-
 template <typename To>
 struct sexpr_cast
 {
-   
    typedef To result_t;
 
    template <typename From>
@@ -67,8 +40,6 @@ struct sexpr_cast
 	   return dispatch(val, is_convertible);
    }
 };
-
-
 
 template <typename F>
 typename F::result_t visit(const sexpr& expr, F f)
@@ -97,20 +68,4 @@ typename F::result_t visit(const sexpr& expr, F f)
 template <typename T>
 T sexpr::get() const
 {return visit(*this,sexpr_cast<T>());}
-
-// 	switch(type_field){
-// 	case sexpr_type::invalid_type:
-// 		return invalid_type{};
-// 	case sexpr_type::nil_type:
-// 		return nil_type{};
-// 	case sexpr_type::integer_type:
-// 		return i;
-// 	case sexpr_type::string_type:
-// 		return s;
-// 	case sexpr_type::double_type:
-// 		return d;
-// 	case sexpr_type::list_type:
-// 		return l;
-// 	}
-// }
-		
+	
