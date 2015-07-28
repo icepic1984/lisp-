@@ -1,5 +1,6 @@
 #include <stdexcept>
 #include "sexpr.hpp"
+#include "operators.hpp"
 
 sexpr::sexpr(){
 	set_type(sexpr_type::invalid_type);
@@ -119,8 +120,15 @@ sexpr& sexpr::operator=(const sexpr& other){
 void sexpr::set_type(sexpr_type::info type)
 {type_field = type;}
 
+sexpr_type::info sexpr::get_type()
+{return sexpr_type::info(type_field);}
+
 std::ostream& operator<<(std::ostream& os, const sexpr& expr)
 {return visit(expr,sexpr_print{},os);}
 
-sexpr_type::info sexpr::get_type()
-{return sexpr_type::info(type_field);}
+sexpr operator+(const sexpr& a, const sexpr& b)
+{return visit(a,b,sexpr_arithmetic<add_binary> {});}
+
+sexpr operator-(const sexpr& a, const sexpr& b)
+{return visit(a,b,sexpr_arithmetic<minus_binary> {});}
+

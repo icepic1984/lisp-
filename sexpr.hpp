@@ -55,8 +55,6 @@ public:
    template <typename T>
    void push_back(const T& t);
 
-   friend std::ostream& operator<<(std::ostream& os, const sexpr& expr);
-
    template <typename F, typename... V>
    friend typename F::result_t visit(const sexpr& expr, F f, V&&... v);
 
@@ -81,6 +79,12 @@ private:
       std::vector<sexpr> l;
    };
 };
+
+std::ostream& operator<<(std::ostream& os, const sexpr& expr);
+
+sexpr operator+(const sexpr& a, const sexpr& b);
+
+sexpr operator-(const sexpr& a, const sexpr& b);
 
 
 #include "sexpr.inl"
