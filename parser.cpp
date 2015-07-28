@@ -70,11 +70,8 @@ sexpr atom(const std::string& str)
 	} else if (std::regex_match(str,integer)) {
 		std::cout << "int" << std::endl;
 	 	return sexpr(stoi(str));
-	} else {
-		return sexpr(str);
 	}
-	// Is never reached
-	return sexpr(sexpr::invalid_type{});
+	return sexpr(str);
 }
 
 
