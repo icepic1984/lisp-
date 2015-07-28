@@ -3,7 +3,7 @@
 #include <string>
 #include "sexpr.hpp"
 #include "parser.hpp"
-#include <boost/spirit/include/support_utree.hpp>
+//#include <boost/spirit/include/support_utree.hpp>
    
 int main()
 {
@@ -16,12 +16,12 @@ int main()
 	std::cout << atom("t") << std::endl;
 	std::cout << atom("f") << std::endl;
 
-	sexpr a;
-	sexpr b(100.0);
-	a.push_back(100.0);
-	a.push_back(200.0);	
-	std::cout<<visit(a,b,sexpr_add {})<<std::endl;
-	                
+	sexpr a(200.8);
+	sexpr b;
+
+	std::cout << visit(a,b,sexpr_arithmetic<minus_binary> {}) << std::endl;
+	std::cout << b + visit(a,sexpr_arithmetic<minus_unary>{}) << std::endl;
+	
 	// using boost::spirit::utree;
 	// utree a(100);
 	// utree b(100);
