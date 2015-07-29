@@ -31,6 +31,12 @@ sexpr::sexpr(const std::string& s_) {
 	new(&s)std::string(s_);
 	this->set_type(sexpr_type::string_type);
 }
+
+sexpr::sexpr(const std::vector<sexpr>& exprs)
+{
+	new(&l)std::vector<sexpr>(exprs);
+	this->set_type(sexpr_type::list_type);
+}
    
 sexpr::sexpr(const sexpr& expr) :
 	type_field(expr.type_field) {
