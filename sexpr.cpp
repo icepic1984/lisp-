@@ -132,3 +132,27 @@ sexpr operator+(const sexpr& a, const sexpr& b)
 sexpr operator-(const sexpr& a, const sexpr& b)
 {return visit(a,b,sexpr_arithmetic<minus_binary> {});}
 
+sexpr operator*(const sexpr& a, const sexpr& b)
+{return visit(a,b,sexpr_arithmetic<mul_binary> {});}
+
+sexpr operator/(const sexpr& a, const sexpr& b)
+{return visit(a,b,sexpr_arithmetic<div_binary> {});}
+
+sexpr operator==(const sexpr& a, const sexpr& b)
+{return sexpr(visit(a,b,sexpr_is_equal {}));}
+ 
+sexpr operator <(const sexpr& a, const sexpr& b)
+{return sexpr(visit(a,b,sexpr_is_less {}));}
+
+sexpr operator >(const sexpr& a, const sexpr& b)
+{return sexpr(visit(b,a,sexpr_is_less {}));}
+
+sexpr operator <=(const sexpr& a, const sexpr& b)
+{return sexpr(visit(a,b,sexpr_is_less_equal {}));}
+
+sexpr operator >=(const sexpr& a, const sexpr& b)
+{return sexpr(visit(b,a,sexpr_is_less_equal {}));}
+
+
+
+	

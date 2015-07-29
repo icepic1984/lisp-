@@ -103,6 +103,113 @@ struct sexpr_print
    }
 };
 
+struct sexpr_is_equal
+{
+   typedef bool result_t;
+
+
+   template<typename A, typename B>
+   bool operator()(const A& a, const B& b) const {
+	   typename std::conditional<std::is_integral<A>::value &&
+	                             std::is_integral<B>::value,
+	                             std::true_type,
+	                             std::false_type>::type select;
+	   return dispatch(a,b,select);
+   }
+
+   template <typename A, typename B>
+   bool dispatch(const A&, const B&, std::false_type) const {
+	   throw std::invalid_argument("Wrong type argument");
+	   return false;
+   }
+
+   template <typename A, typename B>
+   bool dispatch(const A& a, const B& b, std::true_type) const {
+	   return a == b;
+   }
+   
+   bool operator()(sexpr::nil_type, sexpr::nil_type ) const {
+	   return true;
+   }
+   
+   bool operator()(sexpr::invalid_type, sexpr::invalid_type) const {
+	   return true;
+   } 
+   
+};
+	   
+struct sexpr_is_less
+{
+   typedef bool result_t;
+
+   template<typename A, typename B>
+   bool operator()(const A& a, const B& b) const {
+	   typename std::conditional<std::is_arithmetic<A>::value &&
+	                             std::is_arithmetic<B>::value,
+	                             std::true_type,
+	                             std::false_type>::type select;
+	   return dispatch(a,b,select);
+   }
+
+   template <typename A, typename B>
+   bool dispatch(const A&, const B&, std::false_type) const {
+	   throw std::invalid_argument("Wrong type argument");
+	   return false;
+   }
+
+   template <typename A, typename B>
+   bool dispatch(const A& a, const B& b, std::true_type) const {
+	   return a < b;
+   }
+   
+   bool operator()(sexpr::nil_type, sexpr::nil_type ) const {
+	   throw std::invalid_argument("Wrong type argument");
+	   return false;
+   }
+   
+   bool operator()(sexpr::invalid_type, sexpr::invalid_type) const {
+	   throw std::invalid_argument("Wrong type argument");
+	   return false;
+   } 
+   
+};
+
+struct sexpr_is_less_equal
+{
+   typedef bool result_t;
+
+   template<typename A, typename B>
+   bool operator()(const A& a, const B& b) const {
+	   typename std::conditional<std::is_arithmetic<A>::value &&
+	                             std::is_arithmetic<B>::value,
+	                             std::true_type,
+	                             std::false_type>::type select;
+	   return dispatch(a,b,select);
+   }
+
+   template <typename A, typename B>
+   bool dispatch(const A&, const B&, std::false_type) const {
+	   throw std::invalid_argument("Wrong type argument");
+	   return false;
+   }
+
+   template <typename A, typename B>
+   bool dispatch(const A& a, const B& b, std::true_type) const {
+	   return a <= b;
+   }
+   
+   bool operator()(sexpr::nil_type, sexpr::nil_type ) const {
+	   throw std::invalid_argument("Wrong type argument");
+	   return false;
+   }
+   
+   bool operator()(sexpr::invalid_type, sexpr::invalid_type) const {
+	   throw std::invalid_argument("Wrong type argument");
+	   return false;
+   } 
+   
+};
+
 template <typename Base>
 struct sexpr_arithmetic 
 {
@@ -167,6 +274,22 @@ struct minus_binary
    }
 };
 
+struct mul_binary
+{
+   template <typename A, typename B>
+   static sexpr eval(const A& a, const B& b){
+	   return sexpr(a*b);
+   }
+};
+
+struct div_binary
+{
+   template <typename A, typename B>
+   static sexpr eval(const A& a, const B& b){
+	   return sexpr(a/b);
+   }
+};
+
 struct add_unary
 {
    template <typename A>
@@ -182,7 +305,6 @@ struct minus_unary
 	   return sexpr(-a); 
    }
 };
-
 
 
 #endif

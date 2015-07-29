@@ -86,7 +86,19 @@ sexpr operator+(const sexpr& a, const sexpr& b);
 
 sexpr operator-(const sexpr& a, const sexpr& b);
 
+sexpr operator*(const sexpr& a, const sexpr& b);
 
+sexpr operator/(const sexpr& a, const sexpr& b);
+
+sexpr operator==(const sexpr& a, const sexpr& b);
+
+sexpr operator <(const sexpr& a, const sexpr& b);
+
+sexpr operator >(const sexpr& a, const sexpr& b);
+
+sexpr operator <=(const sexpr& a, const sexpr& b);
+
+sexpr operator >=(const sexpr& a, const sexpr& b);
 #include "sexpr.inl"
 
 #endif
