@@ -17,7 +17,7 @@ std::pair<sexpr,Iter> parse_helper(Iter begin, Iter end)
 	} else if (token == ")") {
 		throw std::invalid_argument("Syntax error");
 	} else {
-		return make_pair(sexpr(token),begin);
+		return make_pair(sexpr(atom(token)),begin);
 	}
 }
 
