@@ -2,32 +2,33 @@
 #include <iostream>
 #include <string>
 #include "sexpr.hpp"
+#include <functional>
 #include "parser.hpp"
+#include "lisp.hpp"
+#include <unordered_map>
+#include <vector>
 //#include <boost/spirit/include/support_utree.hpp>
-   
+
 int main()
 {
 
+	//auto t2 = tokenize("(cdr(quote( 1 100 3.2 (* 10.1 10))))");
+	//auto t2 = tokenize("(+ 1 2 3)");
+	auto t2 = tokenize("(= 10 20)");
+	//auto t2 = tokenize("(cdr(quote(1 2 3)))");
+		
 	auto t = tokenize("(defun hello (n) (if (= n 0) n (hello (- n 1))))(hello 10)");
 	auto s = parse(t);
-	std::cout << s[0] << std::endl;
-	std::cout << atom(".9E+11")<<std::endl;
-	std::cout << atom("100")<<std::endl;
-	std::cout << atom("t") << std::endl;
-	std::cout << atom("f") << std::endl;
-
-	sexpr a(200.8);
-	sexpr b;
-
-	std::cout << visit(a,b,sexpr_arithmetic<minus_binary> {}) << std::endl;
-	std::cout << b + visit(a,sexpr_arithmetic<minus_unary>{}) << std::endl;
+	auto s2 = parse(t2);
+	std::cout<<evals(s2)<<std::endl;
+	
 	
 	// using boost::spirit::utree;
 	// utree a(100);
 	// utree b(100);
 	// utree::visit(a,b, add{});
 	
-	 // std::cout << val2 << std::endl;
+	 // std::cout << val2 << std::endl;c
 	 // std::cout<< val2.get<std::string>()<<std::endl;
 	// val.push_back(std::string("hallo"));
 
