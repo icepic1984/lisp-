@@ -30,6 +30,12 @@ struct tag_dispatch<std::vector<sexpr>>
 	typedef sexpr::list_type type;
 };
 
+template <>
+struct tag_dispatch<std::string>
+{
+   typedef sexpr::string_type type;
+};
+
 template <typename To>
 struct sexpr_cast
 {
