@@ -383,6 +383,29 @@ struct car_helper
    }
 };
 
+struct cdr_helper
+{
+   typedef sexpr result_t;
+
+   result_t operator() (const std::vector<sexpr>& l){
+	   if (l.empty())
+	      return sexpr(sexpr::nil_type {});
+	   else if (l.size() == 1)
+	      return sexpr(sexpr::nil_type {});	
+	   else 
+		   return sexpr(std::vector<sexpr>(l.begin()+1,l.end()));
+   }
+
+   result_t operator() (sexpr::nil_type){
+	   return sexpr(sexpr::nil_type {});
+   }
+
+   template <typename A>
+   result_t operator()(const A&){
+	   throw std::invalid_argument("Wrong argument type");
+	   return sexpr();
+   }
+};
 #endif
 
 
