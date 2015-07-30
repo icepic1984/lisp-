@@ -6,7 +6,9 @@ add_definitions(-Weverything -Wno-c++98-compat -Wno-padded)
 
 set (src
     sexpr.cpp	
+	lisp.cpp
 	parser.cpp
+	environment.cpp
   	main.cpp )
 
 find_package(Boost 1.50.0 REQUIRED COMPONENTS program_options
