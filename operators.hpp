@@ -93,6 +93,12 @@ struct sexpr_print
    }
 
    template <typename From>
+   result_t dispatch(const From& val, std::ostream& os, sexpr::string_type){
+	   os << "\""<<val<<"\" ";
+	   return os;
+   }
+
+   template <typename From>
    result_t dispatch(const From& val,std::ostream& os, sexpr::list_type){
 	   os << "( ";
 	   for(auto &iter : val){
