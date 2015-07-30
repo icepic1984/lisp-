@@ -27,25 +27,29 @@ public:
    struct basic_type {};
    struct string_type {};
    struct bool_type {};
+   struct function_type {};
    
    sexpr();
    
-   sexpr(nil_type);
+   explicit sexpr(nil_type);
    
-   sexpr(invalid_type);
+   explicit sexpr(invalid_type);
 
-   sexpr(int i_);
+   explicit sexpr(int i_);
 
-   sexpr(double d_);
+   explicit sexpr(double d_);
 
-   sexpr(bool b_);
+   explicit sexpr(bool b_);
 
-   sexpr(const std::string& s_);
+   explicit sexpr(const std::string& s_);
+
+   explicit sexpr(const char* s_);
    
-   sexpr(const sexpr& expr);
+   explicit sexpr(const std::vector<sexpr>& exprs);
 
-   sexpr(const std::vector<sexpr>& exprs);
    operator bool();
+
+   sexpr(const sexpr& expr);
 
    sexpr& operator=(sexpr&& other) noexcept;
   
@@ -94,6 +98,8 @@ sexpr operator*(const sexpr& a, const sexpr& b);
 sexpr operator/(const sexpr& a, const sexpr& b);
 
 sexpr operator==(const sexpr& a, const sexpr& b);
+
+sexpr operator!=(const sexpr&a, const sexpr& b);
 
 sexpr operator <(const sexpr& a, const sexpr& b);
 
