@@ -144,6 +144,45 @@ struct sexpr_is_equal
    
 };
 	   
+struct sexpr_not_equal
+{
+   typedef bool result_t;
+
+
+   template<typename A, typename B>
+   bool operator()(const A& a, const B& b) const {
+	   typename std::conditional<std::is_integral<A>::value &&
+	                             std::is_integral<B>::value,
+	                             std::true_type,
+	                             std::false_type>::type select;
+	   return dispatch(a,b,select);
+   }
+
+   bool dispatch(const std::string& a, const std::string& b,
+                 std::false_type) const {
+	   return a != b;
+   }
+	   
+   template <typename A, typename B>
+   bool dispatch(const A&, const B&, std::false_type) const {
+	   return false;
+   }
+
+   template <typename A, typename B>
+   bool dispatch(const A& a, const B& b, std::true_type) const {
+	   return a == b;
+   }
+   
+   bool operator()(sexpr::nil_type, sexpr::nil_type ) const {
+	   return true;
+   }
+   
+   bool operator()(sexpr::invalid_type, sexpr::invalid_type) const {
+	   return true;
+   } 
+   
+};
+
 struct sexpr_is_less
 {
    typedef bool result_t;
