@@ -65,10 +65,8 @@ sexpr atom(const std::string& str)
 	} else if (str == "f") {
 		return sexpr(false);
 	} else if (std::regex_match(str,floating_point)) {
-		std::cout << "double" << std::endl;
 		return sexpr(stod(str));
 	} else if (std::regex_match(str,integer)) {
-		std::cout << "int" << std::endl;
 	 	return sexpr(stoi(str));
 	}
 	return sexpr(str);
