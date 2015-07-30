@@ -55,7 +55,7 @@ expressions_t parse(const tokens_t& tokens)
 
 sexpr atom(const std::string& str)
 {
-	std::regex floating_point("[+-]?[0-9]?\\.[0-9]+([eE][-+]?[0-9]+)?",
+	std::regex floating_point("[+-]?[0-9]*\\.[0-9]+([eE][-+]?[0-9]+)?",
 	                          std::regex::extended);
 	std::regex integer("[-+]?[0-9]+",std::regex::extended);
 	if(str == "nil"){
