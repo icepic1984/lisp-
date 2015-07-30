@@ -26,6 +26,11 @@ sexpr::sexpr(bool b_) : b(b_)
 sexpr::sexpr(double d_) : d(d_){
 	set_type(sexpr_type::double_type);
 }
+sexpr::sexpr(const char* s_) 
+{
+	new(&s)std::string(s_);
+	this->set_type(sexpr_type::string_type);
+}
 
 sexpr::sexpr(const std::string& s_) {
 	new(&s)std::string(s_);
@@ -165,6 +170,11 @@ sexpr operator <=(const sexpr& a, const sexpr& b)
 
 sexpr operator >=(const sexpr& a, const sexpr& b)
 {return sexpr(visit(b,a,sexpr_is_less_equal {}));}
+
+sexpr operator!=(const sexpr&a, const sexpr& b)
+{return sexpr(visit(a,b,sexpr_not_equal{}));}
+
+
 
 
 
