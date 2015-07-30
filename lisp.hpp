@@ -1,18 +1,27 @@
 #ifndef LISP_HPP
 #define LISP_HPP
+#include <vector>
+#include "sexpr.hpp"
 
-class sexpr;
+sexpr car(const std::vector<sexpr>& exprs);
 
-sexpr car(const sexpr& exp);
+sexpr cdr(const std::vector<sexpr>& exprs);
 
-sexpr cdr(const sexpr& exp);
+sexpr add(const std::vector<sexpr>& exprs);
 
-sexpr add(const sexpr& expr);
+sexpr mul(const std::vector<sexpr>& exprs);
 
-sexpr mul(const sexpr& expr);
+sexpr divs(const std::vector<sexpr>& exprs);
 
-sexpr divs(const sexpr& expr);
+sexpr sub(const std::vector<sexpr>& exprs);
 
-sexpr sub(const sexpr& expr);
+sexpr equal(const std::vector<sexpr>& exprs);
+
+sexpr evals(const std::vector<sexpr>& a);
+
+sexpr eval(const sexpr& a);
+
+
+
 
 #endif

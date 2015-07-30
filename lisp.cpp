@@ -2,63 +2,84 @@
 #include "lisp.hpp"
 #include "sexpr.hpp"
 
-sexpr car(const sexpr& exp)
-{return visit(exp,car_helper{});}
-
-sexpr cdr(const sexpr& exp)
-{return visit(exp,cdr_helper{});}
-
-sexpr add(const sexpr& expr)
+sexpr car(const std::vector<sexpr>& exprs)
 {
-	if(expr == sexpr(sexpr::nil_type{}))
+	return visit(exprs[0],car_helper {});
+}
+
+sexpr cdr(const std::vector<sexpr>& exprs)
+{
+	return visit(exprs[0],cdr_helper {});
+}
+
+sexpr add(const std::vector<sexpr>& exprs){
+	if(exprs.size() < 1)
 	   throw std::invalid_argument("Wrong number of arguments");
-	auto tmp = expr.get<std::vector<sexpr>>();
-	if(tmp.empty())
-		throw std::invalid_argument("Wrong number of arguments");
-	return std::accumulate(tmp.begin(),tmp.end(),sexpr(0),
+	return std::accumulate(exprs.begin(),exprs.end(),sexpr(0),
 	                       [](const sexpr& a, const sexpr& b) {
 		                       return a + b;
 	                       });
 }
 
-sexpr mul(const sexpr& expr)
+sexpr mul(const std::vector<sexpr>& exprs)
 {
-	if(expr == sexpr(sexpr::nil_type{}))
-		throw std::invalid_argument("Wrong number of arguments");
-	auto tmp = expr.get<std::vector<sexpr>>();
-	if(tmp.empty())
-		throw std::invalid_argument("Wrong number of arguments");
-	return std::accumulate(tmp.begin(),tmp.end(),sexpr(1.0),
+	if(exprs.size() < 1)
+	   throw std::invalid_argument("Wrong number of arguments");
+	return std::accumulate(exprs.begin(),exprs.end(),sexpr(1.0),
 	                       [](const sexpr& a, const sexpr& b) {
 		                       return a * b;
 	                       });
 }
 
-sexpr sub(const sexpr& expr)
+sexpr divs(const std::vector<sexpr>& exprs)
 {
-	if(expr == sexpr(sexpr::nil_type{}))
-		throw std::invalid_argument("Wrong number of arguments");
-	auto tmp = expr.get<std::vector<sexpr>>();
-	if(tmp.empty())
-		throw std::invalid_argument("Wrong number of arguments");
-	sexpr init(tmp.front());
-	return std::accumulate(tmp.begin()+1,tmp.end(),init,
+	if(exprs.size() < 1)
+	   throw std::invalid_argument("Wrong number of arguments");
+	auto init = exprs.front();
+	for(auto iter = exprs.begin() + 1; iter != exprs.end(); ++iter) {
+		init = init / *iter;
+	}
+	return init;
+}
+
+sexpr sub(const std::vector<sexpr>& exprs)
+{
+	if(exprs.size() < 1)
+	   throw std::invalid_argument("Wrong number of arguments");
+	sexpr init(exprs.front());
+	return std::accumulate(exprs.begin()+1,exprs.end(),init,
 	                       [](const sexpr& a, const sexpr& b) {
 		                       return a - b;
 	                       });
 }
-	
-sexpr divs(const sexpr& expr)
+
+sexpr equal(const std::vector<sexpr>& exprs)
 {
-	if(expr == sexpr(sexpr::nil_type{}))
-		throw std::invalid_argument("Wrong number of arguments");
-	auto tmp = expr.get<std::vector<sexpr>>();
-	if(tmp.empty())
-		throw std::invalid_argument("Wrong number of arguments");
-	auto init = tmp.front();
-	for(auto iter = tmp.begin() + 1; iter != tmp.end(); ++iter) {
-		init = init / *iter;
+	if(exprs.size() < 1)
+	   throw std::invalid_argument("Wrong number of arguments");
+	sexpr init(exprs.front());
+	for(auto iter = exprs.begin()+1; iter != exprs.end();
+	    ++iter){
+		if(init != *iter)
+		   return sexpr(false);
 	}
-	return init;
+	return sexpr(true);
+}
+
+sexpr eval(const sexpr& a)
+{
+	return visit(a,eval_helper {});
+}
+
+sexpr evals(const std::vector<sexpr>& a)
+{
+	if(a.empty())
+	   throw std::invalid_argument("Wrong number of arguments");
+	
+	for(auto iter = a.begin(); iter != a.end()-1;
+	    ++iter){
+		eval(*iter);
+	}
+	return eval(a.back());
 }
 
