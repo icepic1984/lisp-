@@ -129,9 +129,13 @@ struct sexpr_is_equal
 	   return dispatch(a,b,select);
    }
 
+   bool dispatch(const std::string& a, const std::string& b,
+                 std::false_type) const {
+	   return a == b;
+   }
+	   
    template <typename A, typename B>
    bool dispatch(const A&, const B&, std::false_type) const {
-	   throw std::invalid_argument("Wrong type argument");
 	   return false;
    }
 
