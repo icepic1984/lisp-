@@ -406,6 +406,47 @@ struct cdr_helper
 	   return sexpr();
    }
 };
+struct eval_helper 
+{
+   typedef sexpr result_t;
+   environment env;
+
+   result_t operator() (const std::vector<sexpr>& l){
+	   if (l.empty())
+		   return sexpr(sexpr::nil_type {});
+	   if(l.front() == sexpr("quote")){
+		   return l[1];
+	   }
+	   auto f = env.find(l.front().get<std::string>());
+	   std::vector<sexpr> exprs;
+	   for(auto iter = l.begin()+1; iter != l.end();
+	       ++iter){
+		   exprs.push_back(visit(*iter,eval_helper{}));
+	   }
+	   return f(exprs);
+   }
+
+   result_t operator() (double a) {
+	   return sexpr(a);
+   }
+
+   result_t operator() (int a) {
+	   return sexpr(a);
+   }
+
+   result_t operator() (const std::string& a){
+	   return sexpr(a);
+   }
+
+   result_t operator() (sexpr::nil_type){
+	   return sexpr(sexpr::nil_type {});
+   }
+
+   result_t operator() (sexpr::invalid_type){
+	   return sexpr(sexpr::invalid_type {});
+   }
+};
+
 #endif
 
 
