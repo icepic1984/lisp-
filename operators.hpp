@@ -361,6 +361,27 @@ struct minus_unary
    }
 };
 
+struct car_helper
+{
+   typedef sexpr result_t;
+   
+   result_t operator() (const std::vector<sexpr>& l){
+	   if (l.empty())
+	      return sexpr(sexpr::nil_type {});
+	   else
+	      return l.front();
+   }
+
+   result_t operator() (sexpr::nil_type){
+	   return sexpr(sexpr::nil_type {});
+   }
+
+   template <typename A>
+   result_t operator()(const A&){
+	   throw std::invalid_argument("Wrong argument type");
+	   return sexpr();
+   }
+};
 
 #endif
 
