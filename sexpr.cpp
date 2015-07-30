@@ -123,6 +123,13 @@ sexpr& sexpr::operator=(const sexpr& other){
 	return *this;
 }
 
+sexpr::operator bool()
+{
+	if(type_field != sexpr_type::bool_type)
+	   throw std::invalid_argument("Can't cast to bool");
+	return b;
+}
+
 void sexpr::set_type(sexpr_type::info type)
 {type_field = type;}
 

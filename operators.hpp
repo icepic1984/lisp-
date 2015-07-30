@@ -1,5 +1,6 @@
 #ifndef OPERATORS_HPP
 #define OPERATORS_HPP
+#include "environment.hpp"
 
 template <typename T>
 struct tag_dispatch{
@@ -406,6 +407,7 @@ struct cdr_helper
 	   return sexpr();
    }
 };
+
 struct eval_helper 
 {
    typedef sexpr result_t;
@@ -446,6 +448,7 @@ struct eval_helper
 	   return sexpr(sexpr::invalid_type {});
    }
 };
+
 
 #endif
 

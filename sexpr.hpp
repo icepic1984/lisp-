@@ -45,6 +45,7 @@ public:
    sexpr(const sexpr& expr);
 
    sexpr(const std::vector<sexpr>& exprs);
+   operator bool();
 
    sexpr& operator=(sexpr&& other) noexcept;
   
