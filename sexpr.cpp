@@ -140,7 +140,7 @@ sexpr::operator bool()
 void sexpr::set_type(sexpr_type::info type)
 {type_field = type;}
 
-sexpr_type::info sexpr::get_type()
+sexpr_type::info sexpr::get_type() const 
 {return sexpr_type::info(type_field);}
 
 std::ostream& operator<<(std::ostream& os, const sexpr& expr)

@@ -68,7 +68,7 @@ public:
    template <typename F>
    friend typename F::result_t visit(const sexpr& a, const sexpr& b, F f);
 
-   sexpr_type::info get_type();
+   sexpr_type::info get_type() const;
 
    template <typename T>
    T get() const;
