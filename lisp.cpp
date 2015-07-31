@@ -83,3 +83,14 @@ sexpr evals(const std::vector<sexpr>& a)
 	return eval(a.back());
 }
 
+sexpr nth(const std::vector<sexpr>& a)
+{
+	for(auto iter : a){
+		std::cout <<"bla:"<< iter << std::endl;
+	}
+	if(a.size() < 2)
+	   throw std::invalid_argument("nth: Wrong number of arguments");
+	return visit(a[1],nth_helper {}, std::size_t(a[0].get<int>()));
+}
+
+	

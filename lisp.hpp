@@ -19,6 +19,8 @@ sexpr equal(const std::vector<sexpr>& exprs);
 
 sexpr evals(const std::vector<sexpr>& a);
 
+sexpr nth(const std::vector<sexpr>& a);
+
 sexpr eval(const sexpr& a);
 
 
