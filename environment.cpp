@@ -9,6 +9,7 @@ environment::environment(): map
 	   {"car",&car},
 	   {"cdr",&cdr},
 	   {"=",&equal},
+	   {"nth",&nth},
 	   {"evals",&evals}}{}
 	
 environment::func_t environment::find(const std::string& name)
