@@ -408,6 +408,24 @@ struct cdr_helper
    }
 };
 
+struct nth_helper
+{
+   typedef sexpr result_t;
+
+   result_t operator() (const std::vector<sexpr>& l,std::size_t n){
+	   if(n > l.size()-1){
+		   throw std::invalid_argument("n_helper: List has wrong size");
+	   }
+	   return l[n];
+   }
+
+   template <typename A>
+   result_t operator()(const A&, std::size_t){
+	   throw std::invalid_argument("n_helper: Wrong argument type");
+	   return sexpr();
+   }
+};
+	   
 struct eval_helper 
 {
    typedef sexpr result_t;
@@ -416,9 +434,27 @@ struct eval_helper
    result_t operator() (const std::vector<sexpr>& l){
 	   if (l.empty())
 		   return sexpr(sexpr::nil_type {});
+
 	   if(l.front() == sexpr("quote")){
-		   return l[1];
+	      if(l.size() < 2)
+	         throw std::invalid_argument("eval_helper <quoute>: Wrong number of arguments");
+	      return l[1];
 	   }
+
+	   if(l.front() == sexpr("cond")){
+		   if(l.size() < 2)
+		      throw std::invalid_argument("eval_helper <cond>: Wrong number of arguments");
+		   for(auto iter = l.begin()+1; iter != l.end(); ++iter){
+			   auto tmp = visit(visit(*iter,nth_helper{},size_t(0)),
+			                    eval_helper {});
+			   if(tmp)
+			      return visit(visit(*iter,nth_helper {}, size_t(1)),
+			                   eval_helper {});
+			   
+		   } 
+		   return sexpr(sexpr::nil_type{});
+	   }
+	   
 	   auto f = env.find(l.front().get<std::string>());
 	   std::vector<sexpr> exprs;
 	   for(auto iter = l.begin()+1; iter != l.end();
