@@ -483,6 +483,10 @@ struct eval_helper
    result_t operator() (sexpr::invalid_type){
 	   return sexpr(sexpr::invalid_type {});
    }
+
+   result_t operator() (bool b){
+	   return sexpr(b);
+   }
 };
 
 
