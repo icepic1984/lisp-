@@ -436,8 +436,8 @@ struct eval_helper
 		   return sexpr(sexpr::nil_type {});
 
 	   if(l.front() == sexpr("quote")){
-	      if(l.size() < 2)
-	         throw std::invalid_argument("eval_helper <quoute>: Wrong number of arguments");
+		   if(l.size() < 2)
+		      throw std::invalid_argument("eval_helper <quoute>: Wrong number of arguments");
 	      return l[1];
 	   }
 
