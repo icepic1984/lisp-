@@ -9,6 +9,7 @@ set (src
 	lisp.cpp
 	parser.cpp
 	environment.cpp
+	operators.cpp
   	main.cpp )
 
 find_package(Boost 1.50.0 REQUIRED COMPONENTS program_options
