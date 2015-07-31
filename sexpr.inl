@@ -1,7 +1,6 @@
 #include <stdexcept>
 #include <type_traits>
 #include <typeinfo>
-#include "operators.hpp"
 #include "bind.hpp"
 
 template <typename T>
@@ -72,6 +71,32 @@ typename F::result_t visit(const sexpr& a, const sexpr& b, F f)
 		break;
 	}
 }
+
+template <typename To>
+struct sexpr_cast
+{
+   typedef To result_t;
+
+   template <typename From>
+   To dispatch(From const& val, std::true_type) const {
+	   return To(val); 
+   }
+
+   template <typename From>
+   To dispatch(From const&, std::false_type) const {
+	   throw std::bad_cast();
+	   return To();
+   }
+
+   template <typename From>
+   To operator()(From const& val) const {
+	   typename  std::conditional<std::is_convertible<From, To>::value ||
+	                    std::is_same<From,To>::value,
+	                    std::true_type, std::false_type>::type is_convertible;
+	   
+	   return dispatch(val, is_convertible);
+   }
+};
 
 template <typename T>
 T sexpr::get() const

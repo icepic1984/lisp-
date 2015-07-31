@@ -1,6 +1,7 @@
 #include <numeric>
 #include "lisp.hpp"
 #include "sexpr.hpp"
+#include "operators.hpp"
 
 sexpr car(const std::vector<sexpr>& exprs)
 {

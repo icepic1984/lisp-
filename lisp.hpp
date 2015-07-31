@@ -3,6 +3,8 @@
 #include <vector>
 #include "sexpr.hpp"
 
+class environment;
+
 sexpr car(const std::vector<sexpr>& exprs);
 
 sexpr cdr(const std::vector<sexpr>& exprs);

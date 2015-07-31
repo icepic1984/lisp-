@@ -1,6 +1,8 @@
 #ifndef OPERATORS_HPP
 #define OPERATORS_HPP
-#include "environment.hpp"
+#include "sexpr.hpp"
+
+class environment;
 
 template <typename T>
 struct tag_dispatch{
@@ -35,32 +37,6 @@ template <>
 struct tag_dispatch<std::string>
 {
    typedef sexpr::string_type type;
-};
-
-template <typename To>
-struct sexpr_cast
-{
-   typedef To result_t;
-
-   template <typename From>
-   To dispatch(From const& val, std::true_type) const {
-	   return To(val); 
-   }
-
-   template <typename From>
-   To dispatch(From const&, std::false_type) const {
-	   throw std::bad_cast();
-	   return To();
-   }
-
-   template <typename From>
-   To operator()(From const& val) const {
-	   typename  std::conditional<std::is_convertible<From, To>::value ||
-	                    std::is_same<From,To>::value,
-	                    std::true_type, std::false_type>::type is_convertible;
-	   
-	   return dispatch(val, is_convertible);
-   }
 };
 
 struct sexpr_print 
@@ -119,7 +95,6 @@ struct sexpr_print
 struct sexpr_is_equal
 {
    typedef bool result_t;
-
 
    template<typename A, typename B>
    bool operator()(const A& a, const B& b) const {
@@ -429,64 +404,21 @@ struct nth_helper
 struct eval_helper 
 {
    typedef sexpr result_t;
-   environment env;
 
-   result_t operator() (const std::vector<sexpr>& l){
-	   if (l.empty())
-		   return sexpr(sexpr::nil_type {});
+   result_t operator() (const std::vector<sexpr>& l,environment& env);
+   
+   result_t operator() (double a, environment&);
 
-	   if(l.front() == sexpr("quote")){
-		   if(l.size() < 2)
-		      throw std::invalid_argument("eval_helper <quoute>: Wrong number of arguments");
-	      return l[1];
-	   }
+   result_t operator() (int a, environment&);
 
-	   if(l.front() == sexpr("cond")){
-		   if(l.size() < 2)
-		      throw std::invalid_argument("eval_helper <cond>: Wrong number of arguments");
-		   for(auto iter = l.begin()+1; iter != l.end(); ++iter){
-			   auto tmp = visit(visit(*iter,nth_helper{},size_t(0)),
-			                    eval_helper {});
-			   if(tmp)
-			      return visit(visit(*iter,nth_helper {}, size_t(1)),
-			                   eval_helper {});
-			   
-		   } 
-		   return sexpr(sexpr::nil_type{});
-	   }
-	   
-	   auto f = env.find(l.front().get<std::string>());
-	   std::vector<sexpr> exprs;
-	   for(auto iter = l.begin()+1; iter != l.end();
-	       ++iter){
-		   exprs.push_back(visit(*iter,eval_helper{}));
-	   }
-	   return f(exprs);
-   }
+   result_t operator() (const std::string& a, environment& );
 
-   result_t operator() (double a) {
-	   return sexpr(a);
-   }
+   result_t operator() (sexpr::nil_type, environment&);
 
-   result_t operator() (int a) {
-	   return sexpr(a);
-   }
+   result_t operator() (sexpr::invalid_type, environment&);
 
-   result_t operator() (const std::string& a){
-	   return sexpr(a);
-   }
-
-   result_t operator() (sexpr::nil_type){
-	   return sexpr(sexpr::nil_type {});
-   }
-
-   result_t operator() (sexpr::invalid_type){
-	   return sexpr(sexpr::invalid_type {});
-   }
-
-   result_t operator() (bool b){
-	   return sexpr(b);
-   }
+   result_t operator() (bool b, environment&);
+   
 };
 
 

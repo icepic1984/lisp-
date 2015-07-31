@@ -176,8 +176,4 @@ sexpr operator >=(const sexpr& a, const sexpr& b)
 sexpr operator!=(const sexpr&a, const sexpr& b)
 {return sexpr(visit(a,b,sexpr_not_equal{}));}
 
-
-
-
-
 	
