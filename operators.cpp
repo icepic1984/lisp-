@@ -25,7 +25,7 @@ eval_helper::result_t eval_helper::operator() (const std::vector<sexpr>& l,envir
 		return sexpr(sexpr::nil_type{});
 	}
 
-	if(l.front() == sexpr("defvar")){
+	if(l.front() == sexpr("define")){
 		if(l.size() != 3)
 			throw std::invalid_argument("eval_helper <defvar>: Wrong number of arguments");
 		env.set_symbol(l[1].get<std::string>(),l[2]);
