@@ -85,7 +85,7 @@ eval_helper::result_t eval_helper::operator() (const std::string& a, environment
 	if(symbol){
 		return *symbol;
 	}
-	throw std::invalid_argument("eval_helper "+a+" undefinded symbol");
+	throw std::invalid_argument("eval_helper <symbol>: Undefined symbol "+a);
 }
 
 eval_helper::result_t eval_helper::operator() (sexpr::nil_type, environment&){
