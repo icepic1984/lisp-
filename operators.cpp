@@ -7,7 +7,7 @@ eval_helper::result_t eval_helper::operator() (const std::vector<sexpr>& l,envir
 	
 	if(l.front() == sexpr("quote")){
 		if(l.size() < 2)
-		   throw std::invalid_argument("eval_helper <quoute>: Wrong number of arguments");
+		   throw std::invalid_argument("eval_helper <quote>: Wrong number of arguments");
 		return l[1];
 	}
 
