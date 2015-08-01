@@ -41,13 +41,35 @@ eval_helper::result_t eval_helper::operator() (const std::vector<sexpr>& l,envir
 		return sexpr(false);
 	}
 
-	auto f = env.find_buildin(l.front().get<std::string>());
+	if(l.front() == sexpr("lambda")){
+		sexpr tmp(l);
+	}
+
 	std::vector<sexpr> exprs;
 	for(auto iter = l.begin()+1; iter != l.end();
 	    ++iter){
 		exprs.push_back(visit(*iter,eval_helper{},env));
 	}
-	return f(exprs);
+
+	auto lambda = env.find_symbol(l.front().get<std::string>());
+	if(lambda){
+		auto param = (*lambda).get<std::vector<sexpr>>()[1].
+		   get<std::vector<sexpr>>();
+		auto body = (*lambda).get<std::vector<sexpr>>()[2];
+		//std::cout << body << std::endl;
+		if(param.size() != exprs.size())
+		   throw std::invalid_argument("eval_helper <lambda>: Wrong number of arguments");
+		environment newenv;
+		
+		for(std::size_t i = 0; i < param.size(); ++i){
+			std::cout << param[i]<<" "<<exprs[i] << std::endl;
+			newenv.set_symbol(param[i].get<std::string>(),exprs[i]);
+		}
+		return visit(body,eval_helper {},newenv);
+	}
+
+	auto buildin = env.find_buildin(l.front().get<std::string>());
+	return buildin(exprs);
 }
 
 eval_helper::result_t eval_helper::operator() (double a, environment&) {
