@@ -156,7 +156,7 @@ struct sexpr_not_equal
 
    template <typename A, typename B>
    bool dispatch(const A& a, const B& b, std::true_type) const {
-	   return a == b;
+	   return a != b;
    }
    
    bool operator()(sexpr::nil_type, sexpr::nil_type ) const {
