@@ -50,6 +50,7 @@ sexpr::sexpr(const sexpr& expr) :
 		new(&s)std::string(expr.s);
 		break;
 	case sexpr_type::list_type:
+	case sexpr_type::lambda_type:
 		new(&l) std::vector<sexpr>(expr.l);
 		break;
 	case sexpr_type::double_type:
@@ -80,6 +81,7 @@ sexpr::sexpr(sexpr&& other) noexcept :
 		new(&s) std::string(std::move(other.s));
 		break;
 	case sexpr_type::list_type:
+	case sexpr_type::lambda_type:
 		new(&l) std::vector<sexpr>(std::move(other.l));
 		break;
 	}
@@ -93,6 +95,7 @@ sexpr::~sexpr() {
 		s.~string_type();
 		break;
 	case sexpr_type::list_type:
+	case sexpr_type::lambda_type:
 		l.~list_type();
 		break;
 	}
@@ -115,6 +118,7 @@ sexpr& sexpr::operator=(sexpr&& other) noexcept {
 		new(&s) std::string(std::move(other.s));
 		break;
 	case sexpr_type::list_type:
+	case sexpr_type::lambda_type:
 		new(&l) std::vector<sexpr>(std::move(other.l));
 		break;
 	}

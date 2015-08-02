@@ -14,7 +14,9 @@ struct sexpr_type
 	   list_type,
 	   nil_type,
 	   invalid_type,
-	   bool_type
+	   bool_type,
+	   lambda_type,
+	   function_type
    };
 };
 
@@ -27,6 +29,7 @@ public:
    struct basic_type {};
    struct string_type {};
    struct bool_type {};
+   struct lambda_type{};
    struct function_type {};
    
    sexpr();
@@ -70,11 +73,12 @@ public:
 
    sexpr_type::info get_type() const;
 
+   void set_type(sexpr_type::info type);
+
    template <typename T>
    T get() const;
    
 private:
-   void set_type(sexpr_type::info type);
    
    int type_field;
    union 
