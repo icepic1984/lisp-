@@ -67,12 +67,12 @@ sexpr equal(const std::vector<sexpr>& exprs)
 	return sexpr(true);
 }
 
-sexpr eval(const sexpr& a, environment& env)
+sexpr eval(const sexpr& a, environment* env)
 {
 	return visit(a,eval_helper {}, env);
 }
 
-sexpr evals(const std::vector<sexpr>& a, environment& env)
+sexpr evals(const std::vector<sexpr>& a, environment* env)
 {
 	if(a.empty())
 	   throw std::invalid_argument("Wrong number of arguments");
