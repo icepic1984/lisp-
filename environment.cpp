@@ -23,9 +23,21 @@ environment::result_t environment::find_symbol(const std::string& name)
 	   return outer->find_symbol(name);
 	return boost::none;
 }
+sexpr environment::update_symbol(const std::string& name, const sexpr& expr)
+{
+	auto env = get_environment(name);
+	if(env)
+	   env->symbols[name] = expr;
+	else
+	   this->symbols[name] = expr;
+	return expr;
+}
 
-void environment::set_symbol(const std::string& name, const sexpr& expr)
-{symbols.insert(std::make_pair(name,expr));}
+sexpr environment::set_symbol(const std::string& name, const sexpr& expr)
+{
+	symbols.insert(std::make_pair(name,expr));
+	return expr;
+}
 
 std::ostream& operator<<(std::ostream& os, const environment& env)
 {
@@ -38,4 +50,14 @@ std::ostream& operator<<(std::ostream& os, const environment& env)
 	return os;
 }
 
+
+environment* environment::get_environment(const std::string& name)
+{
+	auto s = symbols.find(name);
+	if (s != symbols.end())
+	   return this;
+	if(outer)
+	   return outer->get_environment(name);
+	return nullptr;
+}
 
