@@ -3,6 +3,7 @@
 #include <string>
 #include <iostream>
 #include <vector>
+#include <functional>
 
 struct sexpr_type
 {
@@ -23,6 +24,8 @@ struct sexpr_type
 class sexpr 
 {
 public:
+   using func_t = std::function<sexpr(const std::vector<sexpr>&)>;
+
    struct invalid_type {};
    struct nil_type {};
    struct list_type {};
@@ -50,17 +53,21 @@ public:
    
    explicit sexpr(const std::vector<sexpr>& exprs);
 
+   explicit sexpr(func_t);
+   
    operator bool();
 
    sexpr(const sexpr& expr);
+   
+   sexpr(sexpr&& other) noexcept;
+
+   ~sexpr();
 
    sexpr& operator=(sexpr&& other) noexcept;
   
    sexpr& operator=(const sexpr& other);
-  
-   sexpr(sexpr&& other) noexcept;
-   
-   ~sexpr();
+
+   sexpr operator()(const std::vector<sexpr>& expr);
 
    template <typename T>
    void push_back(const T& t);
@@ -88,6 +95,7 @@ private:
       bool b;
       std::string s;
       std::vector<sexpr> l;
+      func_t f;
    };
 };
 

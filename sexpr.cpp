@@ -26,10 +26,18 @@ sexpr::sexpr(bool b_) : b(b_)
 sexpr::sexpr(double d_) : d(d_){
 	set_type(sexpr_type::double_type);
 }
+
+sexpr::sexpr(sexpr::func_t f_)
+{
+	new(&f)sexpr::func_t(f_);
+	set_type(sexpr_type::function_type);
+}
+	
+
 sexpr::sexpr(const char* s_) 
 {
 	new(&s)std::string(s_);
-	this->set_type(sexpr_type::string_type);
+	set_type(sexpr_type::string_type);
 }
 
 sexpr::sexpr(const std::string& s_) {
@@ -52,6 +60,9 @@ sexpr::sexpr(const sexpr& expr) :
 	case sexpr_type::list_type:
 	case sexpr_type::lambda_type:
 		new(&l) std::vector<sexpr>(expr.l);
+		break;
+	case sexpr_type::function_type:
+		new(&f) func_t(expr.f);
 		break;
 	case sexpr_type::double_type:
 		d = expr.d;
@@ -84,6 +95,9 @@ sexpr::sexpr(sexpr&& other) noexcept :
 	case sexpr_type::lambda_type:
 		new(&l) std::vector<sexpr>(std::move(other.l));
 		break;
+	case sexpr_type::function_type:
+		new(&f) func_t(std::move(other.f));
+		break;
 	}
 }
    
@@ -97,6 +111,9 @@ sexpr::~sexpr() {
 	case sexpr_type::list_type:
 	case sexpr_type::lambda_type:
 		l.~list_type();
+		break;
+	case sexpr_type::function_type:
+		f.~func_t();
 		break;
 	}
 }
@@ -121,6 +138,8 @@ sexpr& sexpr::operator=(sexpr&& other) noexcept {
 	case sexpr_type::lambda_type:
 		new(&l) std::vector<sexpr>(std::move(other.l));
 		break;
+	case sexpr_type::function_type:
+		new(&f) func_t(std::move(other.f));
 	}
 	other.type_field = sexpr_type::invalid_type;
 	return *this;
@@ -139,6 +158,13 @@ sexpr::operator bool()
 	if(type_field == sexpr_type::nil_type)
 	   return false;
 	throw std::invalid_argument("Can't cast to bool");
+}
+
+sexpr sexpr::operator()(const std::vector<sexpr>& expr)
+{
+	if(type_field != sexpr_type::function_type)
+	   throw std::invalid_argument("Not a function object");
+	return f(expr);
 }
 
 void sexpr::set_type(sexpr_type::info type)

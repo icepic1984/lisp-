@@ -38,6 +38,8 @@ typename F::result_t visit(const sexpr& expr, F f,V&&... v)
 	case sexpr_type::bool_type:
 		return f(expr.b,std::forward<V>(v)...);
 		break;
+	case sexpr_type::function_type:
+		return f(expr.f,std::forward<V>(v)...);
 	default:
 		return f(expr.l,std::forward<V>(v)...);
 		break;
@@ -66,6 +68,8 @@ typename F::result_t visit(const sexpr& a, const sexpr& b, F f)
 	case sexpr_type::bool_type:
 		return visit(b,bind(f,a.b));
 		break;
+	case sexpr_type::function_type:
+		return visit(b,bind(f,a.f));
 	default:
 		return visit(b,bind(f,a.l));
 		break;
