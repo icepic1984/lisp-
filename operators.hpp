@@ -22,6 +22,12 @@ struct tag_dispatch<sexpr::invalid_type>
 };
 
 template <>
+struct tag_dispatch<sexpr::func_t>
+{
+   typedef sexpr::function_type type;
+};
+
+template <>
 struct tag_dispatch<bool>
 {
    typedef sexpr::bool_type type;
@@ -58,6 +64,11 @@ struct sexpr_print
    result_t dispatch(const From& val,std::ostream& os, sexpr::nil_type){
 	   (void)val; //Disable compiler warning
 	   return os <<"<nil>";
+   }
+
+   template <typename From>
+   result_t dispatch(const From&, std::ostream& os, sexpr::function_type){
+	   return os<<"<function>";
    }
 
    template <typename From>
@@ -133,7 +144,6 @@ struct sexpr_is_equal
 struct sexpr_not_equal
 {
    typedef bool result_t;
-
 
    template<typename A, typename B>
    bool operator()(const A& a, const B& b) const {
@@ -405,19 +415,21 @@ struct eval_helper
 {
    typedef sexpr result_t;
 
-   result_t operator() (const std::vector<sexpr>& l,environment& env);
+   result_t operator() (const std::vector<sexpr>& l,environment* env);
    
-   result_t operator() (double a, environment&);
+   result_t operator() (double a, environment*);
 
-   result_t operator() (int a, environment&);
+   result_t operator() (int a, environment*);
 
-   result_t operator() (const std::string& a, environment& );
+   result_t operator() (const std::string& a, environment* );
 
-   result_t operator() (sexpr::nil_type, environment&);
+   result_t operator() (const sexpr::func_t& f, environment*);
 
-   result_t operator() (sexpr::invalid_type, environment&);
+   result_t operator() (sexpr::nil_type, environment*);
 
-   result_t operator() (bool b, environment&);
+   result_t operator() (sexpr::invalid_type, environment*);
+
+   result_t operator() (bool b, environment*);
    
 };
 
