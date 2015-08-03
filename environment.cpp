@@ -1,28 +1,19 @@
 #include <utility>
 #include "environment.hpp"
 #include "lisp.hpp"
-environment::environment(environment* env): outer(env),
-                                               buildin{{"+", &add},
-	{"/", &divs},
-	{"*", &mul},
-	{"-", &sub},
-	{"car",&car},
-	{"cdr",&cdr},
-	{"=",&equal},
-	{"nth",&nth},
-	{"eval",std::bind(evals,std::placeholders::_1,this)}}
+environment::environment(environment* env):
+	outer(env), symbols{
+	{"+", sexpr(sexpr::func_t(add))},
+	{"/", sexpr(sexpr::func_t(divs))},
+	{"*", sexpr(sexpr::func_t(mul))},
+	{"-", sexpr(sexpr::func_t(sub))},
+	{"car",sexpr(sexpr::func_t(car))},
+	{"cdr",sexpr(sexpr::func_t(cdr))},
+	{"=",sexpr(sexpr::func_t(equal))},
+	{"nth",sexpr(sexpr::func_t(nth))},
+	{"eval",sexpr(sexpr::func_t(std::bind(evals,std::placeholders::_1,this)))}}
 	{}
 	
-environment::func_t environment::find_buildin(const std::string& name)
-{
-	auto f = buildin.find(name);
-	if(f != buildin.end())
-	   return f->second;
-	if(outer)
-	   return outer->find_buildin(name);
-	throw std::invalid_argument("Unknown function: " + name);
-}
-
 environment::result_t environment::find_symbol(const std::string& name)
 {
 	auto s = symbols.find(name);
