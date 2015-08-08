@@ -5,7 +5,7 @@ std::pair<sexpr,Iter> parse_helper(Iter begin, Iter end)
 	   throw std::invalid_argument("Syntax error");
 	auto token = *begin++;
 	if(token == "("){
-		sexpr expr;
+		sexpr expr(std::vector<sexpr>(0));
 		while(*begin != ")"){
 			auto tmp = parse_helper(begin,end);
 			if(tmp.second == end)
