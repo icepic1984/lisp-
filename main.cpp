@@ -7,20 +7,47 @@
 #include "lisp.hpp"
 #include <unordered_map>
 #include <vector>
+#include <memory>
+#include "environment.hpp"
+
 //#include <boost/spirit/include/support_utree.hpp>
+void repl(const std::string & prompt, environment * env)
+{
+    for (;;) {
+        std::cout << prompt;
+        std::string line;
+        std::getline(std::cin, line);
+        try {
+	        std::cout << evals(parse(tokenize(line)), env) << '\n';
+        } catch (std::invalid_argument& e){
+	        std::cout << e.what() << std::endl;
+        }
+    }
+}
 
 int main()
 {
 
-	//auto t2 = tokenize("(cdr(quote( 1 100 3.2 (* 10.1 10))))");
-	//auto t2 = tokenize("(+ 1 2 3)");
-	auto t2 = tokenize("(= 10 20)");
-	//auto t2 = tokenize("(cdr(quote(1 2 3)))");
-		
-	auto t = tokenize("(defun hello (n) (if (= n 0) n (hello (- n 1))))(hello 10)");
-	auto s = parse(t);
-	auto s2 = parse(t2);
-	std::cout<<evals(s2)<<std::endl;
+
+	// auto t = tokenize("(define countdown (lambda (n) (cond ((= n 0) n) (t (countdown(- n 1))))))(countdown 10)");
+
+	auto env = std::make_unique<environment>();
+
+	 // auto t = tokenize("(define count (lambda (n) (lambda () (set n (- n 1)))))\
+     //                     (define count-3 (count 3)) \
+     //                     (define count-4 (count 4)) \
+     //                     (count-3)(count-3)(count-4)(count-4)");
+
+	 // auto t = tokenize("(define count (lambda (n) (lambda () (set n (- n 1)))))\
+     //                     (define count-3 (count 3))	  \
+     //                     ");
+
+
+	//auto t = tokenize("((lambda (x y) (+ x y)) 10 20)");
+	// auto s = parse(t);
+	// std::cout<<evals(s,env.get())<<std::endl;
+	// std::cout << *env << std::endl;
+	repl("LISP> ",env.get());
 	
 	
 	// using boost::spirit::utree;
