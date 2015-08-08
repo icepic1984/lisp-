@@ -46,7 +46,7 @@ std::ostream& operator<<(std::ostream& os, const environment& env)
 		os << iter.first << " = " <<iter.second<<"\n";
 	}
 	if(env.outer)
-	   os << "\t"<< *(env.outer);
+	   os << "****OUTER****"<<"\n"<< *(env.outer);
 	
 	return os;
 }
