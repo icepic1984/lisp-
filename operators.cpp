@@ -40,15 +40,6 @@ eval_helper::result_t eval_helper::operator() (const std::vector<sexpr>& l,envir
 		return env->set_symbol(l[1].get<std::string>(),visit(l[2],eval_helper{},env));
 	}
 
-	if(l.front() == sexpr("atom")){
-		if(l.size() != 2)
-		   throw std::invalid_argument("eval_helper <atom>: Wrong number of arguments");
-		auto tmp = visit(l[1],eval_helper {}, env);
-		if(tmp.get_type() != sexpr_type::list_type)
-		   return sexpr(true);
-		return sexpr(false);
-	}
-
 	if(l.front() == sexpr("lambda")){
 		sexpr tmp(l);
 		tmp.set_type(sexpr_type::lambda_type);

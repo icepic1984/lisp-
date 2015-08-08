@@ -92,6 +92,26 @@ sexpr nth(const std::vector<sexpr>& a)
 }
 
 
+sexpr atom(const std::vector<sexpr>& a)
+{
+	if(a.size() < 1)
+	   throw std::invalid_argument("atom: Wrong number of arguments");
+	if(a[0].get_type() == sexpr_type::list_type){
+		if(a[0].get<std::vector<sexpr>>().size() == 0){
+	      return sexpr(true);
+		} else {
+	      return sexpr(false);
+		}
+	} else if (a[0].get_type() == sexpr_type::lambda_type) {
+		return sexpr(false);
+	} else if (a[0].get_type() == sexpr_type::function_type) {
+		return sexpr(false);
+	} else {
+		return sexpr(true);
+	}
+}
+
+
 
 
 	

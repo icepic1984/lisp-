@@ -11,7 +11,8 @@ environment::environment(environment* env):
 	{"cdr",sexpr(sexpr::func_t(cdr))},
 	{"=",sexpr(sexpr::func_t(equal))},
 	{"nth",sexpr(sexpr::func_t(nth))},
-	{"eval",sexpr(sexpr::func_t(std::bind(evals,std::placeholders::_1,this)))}}
+	{"eval",sexpr(sexpr::func_t(std::bind(evals,std::placeholders::_1,this)))},
+	{"atom",sexpr(sexpr::func_t(atom))}}
 	{}
 	
 environment::result_t environment::find_symbol(const std::string& name)
@@ -42,7 +43,7 @@ sexpr environment::set_symbol(const std::string& name, const sexpr& expr)
 std::ostream& operator<<(std::ostream& os, const environment& env)
 {
 	for(auto iter : env.symbols){
-		os << iter.first << " = " <<iter.second;
+		os << iter.first << " = " <<iter.second<<"\n";
 	}
 	if(env.outer)
 	   os << "\t"<< *(env.outer);
