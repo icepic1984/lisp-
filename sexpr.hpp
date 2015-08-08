@@ -4,6 +4,7 @@
 #include <iostream>
 #include <vector>
 #include <functional>
+#include <memory>
 
 struct sexpr_type
 {
@@ -20,6 +21,9 @@ struct sexpr_type
 	   function_type
    };
 };
+
+class environment;
+using environment_ptr = std::shared_ptr<environment>;
 
 class sexpr 
 {
@@ -82,12 +86,17 @@ public:
 
    void set_type(sexpr_type::info type);
 
+   environment_ptr get_env();
+
+   void set_env(environment_ptr e);
+
    template <typename T>
    T get() const;
    
 private:
-   
    int type_field;
+   environment_ptr env;
+   
    union 
    {
       int i;

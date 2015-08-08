@@ -52,7 +52,9 @@ sexpr::sexpr(const std::vector<sexpr>& exprs)
 }
    
 sexpr::sexpr(const sexpr& expr) :
-	type_field(expr.type_field) {
+	type_field(expr.type_field),
+	env(expr.env)
+{
 	switch(expr.type_field){
 	case sexpr_type::string_type:
 		new(&s)std::string(expr.s);
@@ -77,7 +79,9 @@ sexpr::sexpr(const sexpr& expr) :
 }
  
 sexpr::sexpr(sexpr&& other) noexcept :
-	type_field(std::move(other.type_field)) {
+   type_field(std::move(other.type_field)) ,
+   env(std::move(other.env))
+{
 	switch(type_field){
 	case sexpr_type::integer_type:
 		i = std::move(other.i);
@@ -136,6 +140,7 @@ sexpr& sexpr::operator=(sexpr&& other) noexcept {
 		break;
 	case sexpr_type::list_type:
 	case sexpr_type::lambda_type:
+		env = std::move(other.env);
 		new(&l) std::vector<sexpr>(std::move(other.l));
 		break;
 	case sexpr_type::function_type:
@@ -169,6 +174,12 @@ sexpr sexpr::operator()(const std::vector<sexpr>& expr)
 
 void sexpr::set_type(sexpr_type::info type)
 {type_field = type;}
+
+environment_ptr sexpr::get_env()
+{return env;}
+
+void sexpr::set_env(environment_ptr e)
+{env = e;}
 
 sexpr_type::info sexpr::get_type() const 
 {return sexpr_type::info(type_field);}
