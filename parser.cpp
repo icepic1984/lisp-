@@ -1,5 +1,6 @@
 #include "parser.hpp"
 #include <regex>
+#include "lisp_string.hpp"
 
 bool is_special(char c)
 {
@@ -58,6 +59,11 @@ sexpr atom(const std::string& str)
 	std::regex floating_point("[+-]?[0-9]*\\.[0-9]+([eE][-+]?[0-9]+)?",
 	                          std::regex::extended);
 	std::regex integer("[-+]?[0-9]+",std::regex::extended);
+	std::regex stringtype("\"(.*?)\"");
+	std::smatch match;
+
+
+	
 	if(str == "nil"){
 		return sexpr(sexpr::nil_type{});
 	} else if (str == "t") {
@@ -68,6 +74,8 @@ sexpr atom(const std::string& str)
 		return sexpr(stod(str));
 	} else if (std::regex_match(str,integer)) {
 	 	return sexpr(stoi(str));
+	} else if (std::regex_match(str,match,stringtype)) {
+		return sexpr(lisp_string(match[1].str().c_str()));
 	}
 	return sexpr(str);
 }
