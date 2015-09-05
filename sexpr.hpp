@@ -5,6 +5,7 @@
 #include <vector>
 #include <functional>
 #include <memory>
+#include "lisp_string.hpp"
 
 struct sexpr_type
 {
@@ -21,11 +22,6 @@ struct sexpr_type
 	   lambda_type,
 	   function_type
    };
-};
-
-class lisp_string : public std::string
-{
-   using std::string::string;
 };
 
 class environment;

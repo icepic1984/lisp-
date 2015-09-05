@@ -32,7 +32,6 @@ sexpr::sexpr(sexpr::func_t f_)
 	new(&f)sexpr::func_t(f_);
 	set_type(sexpr_type::function_type);
 }
-	
 
 sexpr::sexpr(const char* s_) 
 {
