@@ -67,6 +67,7 @@ typename F::result_t visit(const sexpr& a, const sexpr& b, F f)
 		break;
 	case sexpr_type::string_type:
 		return visit(b,bind(f,a.ls));
+		break;
 	case sexpr_type::double_type:
 		return visit(b,bind(f,a.d));
 		break;
