@@ -15,7 +15,7 @@ sexpr cdr(const std::vector<sexpr>& exprs)
 
 sexpr add(const std::vector<sexpr>& exprs){
 	if(exprs.size() < 1)
-	   throw std::invalid_argument("Wrong number of arguments");
+	   throw std::invalid_argument("<add>: Wrong number of arguments");
 	return std::accumulate(exprs.begin(),exprs.end(),sexpr(0),
 	                       [](const sexpr& a, const sexpr& b) {
 		                       return a + b;
@@ -35,7 +35,7 @@ sexpr mul(const std::vector<sexpr>& exprs)
 sexpr divs(const std::vector<sexpr>& exprs)
 {
 	if(exprs.size() < 1)
-	   throw std::invalid_argument("Wrong number of arguments");
+	   throw std::invalid_argument("<divs>: Wrong number of arguments");
 	auto init = exprs.front();
 	for(auto iter = exprs.begin() + 1; iter != exprs.end(); ++iter) {
 		init = init / *iter;
@@ -57,7 +57,7 @@ sexpr sub(const std::vector<sexpr>& exprs)
 sexpr equal(const std::vector<sexpr>& exprs)
 {
 	if(exprs.size() < 1)
-	   throw std::invalid_argument("Wrong number of arguments");
+	   throw std::invalid_argument("<equal>: Wrong number of arguments");
 	sexpr init(exprs.front());
 	for(auto iter = exprs.begin()+1; iter != exprs.end();
 	    ++iter){
@@ -75,7 +75,7 @@ sexpr eval(const sexpr& a, environment* env)
 sexpr evals(const std::vector<sexpr>& a, environment* env)
 {
 	if(a.empty())
-	   throw std::invalid_argument("Wrong number of arguments");
+	   throw std::invalid_argument("<evals>: Wrong number of arguments");
 	
 	for(auto iter = a.begin(); iter != a.end()-1;
 	    ++iter){
@@ -87,7 +87,7 @@ sexpr evals(const std::vector<sexpr>& a, environment* env)
 sexpr nth(const std::vector<sexpr>& a)
 {
 	if(a.size() < 2)
-	   throw std::invalid_argument("nth: Wrong number of arguments");
+	   throw std::invalid_argument("<nth>: Wrong number of arguments");
 	return visit(a[1],nth_helper {}, std::size_t(a[0].get<int>()));
 }
 
@@ -95,7 +95,7 @@ sexpr nth(const std::vector<sexpr>& a)
 sexpr atom(const std::vector<sexpr>& a)
 {
 	if(a.size() < 1)
-	   throw std::invalid_argument("atom: Wrong number of arguments");
+	   throw std::invalid_argument("<atom>: Wrong number of arguments");
 	if(a[0].get_type() == sexpr_type::list_type){
 		if(a[0].get<std::vector<sexpr>>().size() == 0){
 	      return sexpr(true);
