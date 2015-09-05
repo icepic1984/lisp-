@@ -49,7 +49,7 @@ sexpr::sexpr(const std::string& s_)
 sexpr::sexpr(const lisp_string& ls_)
 {
 	new(&ls) lisp_string(ls_);
-	this->set_type(sexpr_type::symbol_type);
+	this->set_type(sexpr_type::string_type);
 }
 
 sexpr::sexpr(const std::vector<sexpr>& exprs)
