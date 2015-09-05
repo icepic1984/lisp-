@@ -37,12 +37,19 @@ sexpr::sexpr(sexpr::func_t f_)
 sexpr::sexpr(const char* s_) 
 {
 	new(&s)std::string(s_);
-	set_type(sexpr_type::string_type);
+	set_type(sexpr_type::symbol_type);
 }
 
-sexpr::sexpr(const std::string& s_) {
-	new(&s)std::string(s_);
-	this->set_type(sexpr_type::string_type);
+sexpr::sexpr(const std::string& s_)
+{
+	new(&s) std::string(s_);
+	this->set_type(sexpr_type::symbol_type);
+}
+
+sexpr::sexpr(const lisp_string& ls_)
+{
+	new(&ls) lisp_string(ls_);
+	this->set_type(sexpr_type::symbol_type);
 }
 
 sexpr::sexpr(const std::vector<sexpr>& exprs)
@@ -57,7 +64,10 @@ sexpr::sexpr(const sexpr& expr) :
 {
 	switch(expr.type_field){
 	case sexpr_type::string_type:
-		new(&s)std::string(expr.s);
+		new(&ls) lisp_string(expr.ls);
+		break;
+	case sexpr_type::symbol_type:
+		new(&s) std::string(expr.s);
 		break;
 	case sexpr_type::list_type:
 	case sexpr_type::lambda_type:
@@ -92,8 +102,11 @@ sexpr::sexpr(sexpr&& other) noexcept :
 	case sexpr_type::bool_type:
 		b = std::move(other.b);
 		break;
-	case sexpr_type::string_type:
+	case sexpr_type::symbol_type:
 		new(&s) std::string(std::move(other.s));
+		break;
+	case sexpr_type::string_type:
+		new(&ls) lisp_string(std::move(other.ls));
 		break;
 	case sexpr_type::list_type:
 	case sexpr_type::lambda_type:
@@ -107,10 +120,14 @@ sexpr::sexpr(sexpr&& other) noexcept :
    
 sexpr::~sexpr() {
 	typedef std::string string_type;
+	typedef lisp_string lispstring_type;
 	typedef std::vector<sexpr> list_type;
 	switch(type_field){
-	case sexpr_type::string_type:
+	case sexpr_type::symbol_type:
 		s.~string_type();
+		break;
+	case sexpr_type::string_type:
+		ls.~lispstring_type();
 		break;
 	case sexpr_type::list_type:
 	case sexpr_type::lambda_type:
@@ -135,8 +152,11 @@ sexpr& sexpr::operator=(sexpr&& other) noexcept {
 	case sexpr_type::bool_type:
 		b = std::move(other.b);
 		break;
-	case sexpr_type::string_type:
+	case sexpr_type::symbol_type:
 		new(&s) std::string(std::move(other.s));
+		break;
+	case sexpr_type::string_type:
+		new(&ls) lisp_string(std::move(other.ls));
 		break;
 	case sexpr_type::list_type:
 	case sexpr_type::lambda_type:

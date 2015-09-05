@@ -40,9 +40,15 @@ struct tag_dispatch<std::vector<sexpr>>
 };
 
 template <>
-struct tag_dispatch<std::string>
+struct tag_dispatch<lisp_string>
 {
    typedef sexpr::string_type type;
+};
+
+template <>
+struct tag_dispatch<std::string>
+{
+   typedef sexpr::symbol_type type;
 };
 
 struct sexpr_print 
@@ -81,8 +87,14 @@ struct sexpr_print
    }
 
    template <typename From>
+   result_t dispatch(const From& val, std::ostream& os, sexpr::symbol_type){
+	   os << val;
+	   return os;
+   }
+
+   template <typename From>
    result_t dispatch(const From& val, std::ostream& os, sexpr::string_type){
-	   os << "\""<<val<<"\" ";
+	   os << "\"" <<val <<"\"";
 	   return os;
    }
 

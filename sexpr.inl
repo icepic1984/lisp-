@@ -29,8 +29,11 @@ typename F::result_t visit(const sexpr& expr, F f,V&&... v)
 	case sexpr_type::integer_type:
 		return f(expr.i,std::forward<V>(v)...);
 		break;
-	case sexpr_type::string_type:
+	case sexpr_type::symbol_type:
 		return f(expr.s,std::forward<V>(v)...);
+		break;
+	case sexpr_type::string_type:
+		return f(expr.ls,std::forward<V>(v)...);
 		break;
 	case sexpr_type::double_type:
 		return f(expr.d,std::forward<V>(v)...);
@@ -59,9 +62,11 @@ typename F::result_t visit(const sexpr& a, const sexpr& b, F f)
 	case sexpr_type::integer_type:
 		return visit(b,bind(f,a.i));
 		break;
-	case sexpr_type::string_type:
+	case sexpr_type::symbol_type:
 		return visit(b,bind(f,a.s));
 		break;
+	case sexpr_type::string_type:
+		return visit(b,bind(f,a.ls));
 	case sexpr_type::double_type:
 		return visit(b,bind(f,a.d));
 		break;
