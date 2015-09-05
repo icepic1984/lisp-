@@ -12,6 +12,7 @@ struct sexpr_type
    {
 	   integer_type,
 	   string_type,
+	   symbol_type,
 	   double_type,
 	   list_type,
 	   nil_type,
@@ -20,6 +21,11 @@ struct sexpr_type
 	   lambda_type,
 	   function_type
    };
+};
+
+class lisp_string : public std::string
+{
+   using std::string::string;
 };
 
 class environment;
@@ -35,6 +41,7 @@ public:
    struct list_type {};
    struct basic_type {};
    struct string_type {};
+   struct symbol_type {};
    struct bool_type {};
    struct lambda_type{};
    struct function_type {};
@@ -52,6 +59,8 @@ public:
    explicit sexpr(bool b_);
 
    explicit sexpr(const std::string& s_);
+
+   explicit sexpr(const lisp_string& ls_);
 
    explicit sexpr(const char* s_);
    
@@ -103,6 +112,7 @@ private:
       double d;
       bool b;
       std::string s;
+      lisp_string ls;
       std::vector<sexpr> l;
       func_t f;
    };
