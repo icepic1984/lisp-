@@ -132,6 +132,12 @@ struct sexpr_is_equal
                  std::false_type) const {
 	   return a == b;
    }
+
+   bool dispatch(const lisp_string& a, lisp_string& b,
+                 std::false_type) const {
+	   return a == b;
+   }
+
 	   
    template <typename A, typename B>
    bool dispatch(const A&, const B&, std::false_type) const {
@@ -167,6 +173,11 @@ struct sexpr_not_equal
    }
 
    bool dispatch(const std::string& a, const std::string& b,
+                 std::false_type) const {
+	   return a != b;
+   }
+
+   bool dispatch(const lisp_string& a, const lisp_string& b,
                  std::false_type) const {
 	   return a != b;
    }
@@ -435,6 +446,8 @@ struct eval_helper
 
    result_t operator() (const std::string& a, environment* );
 
+   result_t operator() (const lisp_string& a, environment* );
+
    result_t operator() (const sexpr::func_t& f, environment*);
 
    result_t operator() (sexpr::nil_type, environment*);
@@ -447,5 +460,4 @@ struct eval_helper
 
 
 #endif
-
 

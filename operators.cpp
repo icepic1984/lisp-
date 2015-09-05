@@ -92,6 +92,10 @@ eval_helper::result_t eval_helper::operator() (const std::string& a, environment
 	throw std::invalid_argument("eval_helper <symbol>: Undefined symbol "+a);
 }
 
+eval_helper::result_t eval_helper::operator() (const lisp_string& a, environment* env ){
+	return sexpr(a) ;
+}
+
 eval_helper::result_t eval_helper::operator() (sexpr::nil_type, environment*){
 	return sexpr(sexpr::nil_type {});
 }
