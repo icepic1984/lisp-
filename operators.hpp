@@ -193,11 +193,11 @@ struct sexpr_not_equal
    }
    
    bool operator()(sexpr::nil_type, sexpr::nil_type ) const {
-	   return true;
+	   return false;
    }
    
    bool operator()(sexpr::invalid_type, sexpr::invalid_type) const {
-	   return true;
+	   return false;
    } 
    
 };
