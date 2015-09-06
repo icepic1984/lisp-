@@ -183,8 +183,8 @@ struct sexpr_not_equal
    }
 	   
    template <typename A, typename B>
-   bool dispatch(const A&, const B&, std::false_type) const {
-	   return false;
+   bool dispatch(const A& a, const B& b, std::false_type) const {
+	   return true;
    }
 
    template <typename A, typename B>
