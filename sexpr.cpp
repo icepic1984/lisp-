@@ -194,10 +194,10 @@ sexpr sexpr::operator()(const std::vector<sexpr>& expr)
 void sexpr::set_type(sexpr_type::info type)
 {type_field = type;}
 
-environment_ptr sexpr::get_env()
+environment* sexpr::get_env()
 {return env;}
 
-void sexpr::set_env(environment_ptr e)
+void sexpr::set_env(environment* e)
 {env = e;}
 
 sexpr_type::info sexpr::get_type() const 

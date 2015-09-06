@@ -43,8 +43,8 @@ eval_helper::result_t eval_helper::operator() (const std::vector<sexpr>& l,envir
 	if(l.front() == sexpr("lambda")){
 		sexpr tmp(l);
 		tmp.set_type(sexpr_type::lambda_type);
-		tmp.set_env(std::make_unique<environment>(*env));
-		//std::cout <<"Bla"<< *(tmp.get_env()) << std::endl;
+		tmp.set_env(env);
+		//std::cout << *tmp.get_env() << std::endl;
 		return tmp;
 	}
 
@@ -61,15 +61,13 @@ eval_helper::result_t eval_helper::operator() (const std::vector<sexpr>& l,envir
 		auto body = proc.get<std::vector<sexpr>>()[2];
 		if(param.size() != exprs.size())
 		   throw std::invalid_argument("eval_helper <lambda>: Wrong number of arguments");
-		auto newenv = std::make_unique<environment>(proc.get_env().get());
+		auto newenv = new environment(proc.get_env());
+		//std::cout << *newenv << std::endl;
 		for(std::size_t i = 0; i < param.size(); ++i){
-			std::cout << param[i]<<" "<<exprs[i] << std::endl;
+			//std::cout << param[i]<<" "<<exprs[i] << std::endl;
 			newenv->set_symbol(param[i].get<std::string>(),exprs[i]);
 		}
-		// std::cout << "New Env:" << std::endl;
-		// std::cout << *newenv << std::endl;
-		// std::cout << "End" << std::endl;
-		return visit(body,eval_helper {},newenv.get());
+		return visit(body,eval_helper {},newenv);
 	} else if(proc.get_type() == sexpr_type::function_type){
 		return proc(exprs);
 	}
@@ -93,6 +91,7 @@ eval_helper::result_t eval_helper::operator() (const std::string& a, environment
 }
 
 eval_helper::result_t eval_helper::operator() (const lisp_string& a, environment* env ){
+	(void)env;
 	return sexpr(a) ;
 }
 
