@@ -27,7 +27,10 @@ sexpr evals(const std::vector<sexpr>& a, environment* env);
 
 sexpr eval(const sexpr& a, environment* env);
 
+sexpr ls(const std::vector<sexpr>& a, environment* env);
 
+sexpr import(const std::vector<sexpr>& a, environment* env);
 
+sexpr imports(const std::vector<sexpr>& a, environment* env);
 
 #endif

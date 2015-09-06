@@ -1,7 +1,12 @@
 #include <numeric>
+#include <iostream>
+#include <fstream>
+#include <regex>
 #include "lisp.hpp"
 #include "sexpr.hpp"
 #include "operators.hpp"
+#include "environment.hpp"
+#include "parser.hpp"
 
 sexpr car(const std::vector<sexpr>& exprs)
 {
@@ -111,7 +116,39 @@ sexpr atom(const std::vector<sexpr>& a)
 	}
 }
 
+sexpr ls(const std::vector<sexpr>& a, environment* env)
+{
+	if(a.size() != 0)
+	   throw std::invalid_argument("<ls>: Wrong number of arguments");
+	std::cout << *env << std::endl;
+	return sexpr(sexpr::nil_type {});
+}
+
+sexpr import(const std::vector<sexpr>& a, environment* env)
+{
+	if(a.size() < 1)
+	   throw std::invalid_argument("<import>: Wrong number of arguments");
+	auto path = a[0].get<lisp_string>();
+	std::ifstream file(path);
+	if(!file)
+	   throw std::invalid_argument("<import>: File not found: "+ path);
+	std::regex reg("([;]{2,}.*$)");
+	std::string line;
+	std::string content;
+	while(std::getline(file,line)){
+		content += std::regex_replace(line,reg,"");
+	}
+	return evals(parse(tokenize(content)),env);
+}
 
 
+sexpr imports(const std::vector<sexpr>& a, environment* env)
+{
+	std::vector<sexpr> l;
+	l.push_back(sexpr(lisp_string("/home/icepic/Code/lisp++/lisp.el")));
+	return import(l,env);
+}
+
+	
 
 	
