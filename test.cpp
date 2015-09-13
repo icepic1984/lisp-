@@ -276,6 +276,22 @@ BOOST_AUTO_TEST_CASE(cond)
 	 BOOST_CHECK_EQUAL(expr.get<int>(),4);
 }
 	
+BOOST_AUTO_TEST_CASE(lambda_test)
+{
+	auto env = std::make_unique<environment>();
+	auto expr = evals(parse(tokenize("(define plus (lambda (x y) (+ x y)))")),
+	                  env.get());
+	expr = evals(parse(tokenize("(plus 20 20)")), env.get());
+	BOOST_CHECK_EQUAL(expr.get<int>(),40);
+	// Test recursion
+
+	expr = evals(parse(tokenize("(define countdown (lambda (n)\
+	                                (cond ((= n 0) n)\
+		                                   (t (countdown(- n 1))))))")), env.get());
+	expr = evals(parse(tokenize("(countdown 10)")), env.get());
+	BOOST_CHECK_EQUAL(expr.get<int>(),0);
+}
+
 BOOST_AUTO_TEST_CASE(lexicalscope_test)
 {
 	auto env = std::make_unique<environment>();
