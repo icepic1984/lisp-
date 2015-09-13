@@ -200,9 +200,23 @@ BOOST_AUTO_TEST_CASE(compare_test)
 	BOOST_CHECK_EQUAL(expr.get<bool>(),false) ;
 }
 
-BOOST_AUTO_TEST_CHECK(arithmetric_test)
+BOOST_AUTO_TEST_CASE(arithmetric_test)
 {
-	
+
+	auto env = std::make_unique<environment>();
+	auto expr = evals(parse(tokenize("(+ 3 2 10)")),env.get());
+	BOOST_CHECK_EQUAL(expr.get<int>(),15);
+
+	expr = evals(parse(tokenize("(- 3 2 10)")),env.get());
+	BOOST_CHECK_EQUAL(expr.get<int>(),-9);
+
+	expr = evals(parse(tokenize("(* 3 2 10)")),env.get());
+	BOOST_CHECK_EQUAL(expr.get<int>(),60);
+
+	expr = evals(parse(tokenize("(/ 100 10 2)")),env.get());
+	BOOST_CHECK_EQUAL(expr.get<int>(),5);
+}
+
 
 BOOST_AUTO_TEST_CASE(begin_test)
 {
