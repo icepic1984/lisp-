@@ -99,6 +99,27 @@ BOOST_AUTO_TEST_CASE(car_test)
 	BOOST_CHECK_EQUAL(buffer.str(),"( a b ) ");
 
 }
+
+BOOST_AUTO_TEST_CASE(compare_test)
+{
+	auto env = std::make_unique<environment>();
+	auto expr = evals(parse(tokenize("(= nil nil)")),env.get());
+	BOOST_CHECK_EQUAL(expr.get<bool>(),true);
+
+	expr = evals(parse(tokenize("(= t t)")),env.get());
+	BOOST_CHECK_EQUAL(expr.get<bool>(),true);
+
+	expr = evals(parse(tokenize("(= t f)")),env.get());
+	BOOST_CHECK_EQUAL(expr.get<bool>(),false);
+
+	expr = evals(parse(tokenize("(= nil (cdr (quote(10))))")),env.get());
+	BOOST_CHECK_EQUAL(expr.get<bool>(),true);
+
+	expr = evals(parse(tokenize("(= nil (cdr (quote(10 20))))")),env.get());
+	BOOST_CHECK_EQUAL(expr.get<bool>(),false);
+
+}
+
 // (cons 'a '(b c))
 // (cons '(a) '(b c))
 // (cons '(b c) 'a)
