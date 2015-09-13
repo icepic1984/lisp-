@@ -123,6 +123,14 @@ BOOST_AUTO_TEST_CASE(compare_test)
 // (cons 'a '(b c))
 // (cons '(a) '(b c))
 // (cons '(b c) 'a)
+BOOST_AUTO_TEST_CASE(begin_test)
+{
+	auto env = std::make_unique<environment>();
+	auto expr = evals(parse(tokenize("(begin (quote a) (quote b))")),env.get());
+	std::stringstream buffer;
+	buffer << expr;
+	BOOST_CHECK_EQUAL(buffer.str(), "b ");
+}
 BOOST_AUTO_TEST_CASE(lexicalscope_test)
 {
 	auto env = std::make_unique<environment>();
