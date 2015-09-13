@@ -123,3 +123,20 @@ BOOST_AUTO_TEST_CASE(compare_test)
 // (cons 'a '(b c))
 // (cons '(a) '(b c))
 // (cons '(b c) 'a)
+BOOST_AUTO_TEST_CASE(lexicalscope_test)
+{
+	auto env = std::make_unique<environment>();
+	auto expr = evals(parse(tokenize("(define count (lambda (n) (lambda () (set n (- n 1)))))")),env.get());
+	evals(parse(tokenize("(define count-3 (count 3))")),env.get());
+	evals(parse(tokenize("(define count-4 (count 4))")),env.get());
+
+	expr = evals(parse(tokenize("(count-3)")),env.get());
+	BOOST_CHECK_EQUAL(expr.get<int>(),2);
+	expr = evals(parse(tokenize("(count-3)")),env.get());
+	BOOST_CHECK_EQUAL(expr.get<int>(),1);
+	
+	expr = evals(parse(tokenize("(count-4)")),env.get());
+	BOOST_CHECK_EQUAL(expr.get<int>(),3);
+	expr = evals(parse(tokenize("(count-4)")),env.get());
+	BOOST_CHECK_EQUAL(expr.get<int>(),2);
+}
