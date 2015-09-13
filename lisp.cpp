@@ -89,6 +89,36 @@ sexpr evals(const std::vector<sexpr>& a, environment* env)
 	return eval(a.back(),env);
 }
 
+sexpr cons(const std::vector<sexpr>& a) 
+{
+	if(a.size() != 2)
+	   throw std::invalid_argument("<cons>: Wrong number of arguments");
+	sexpr tmp;
+	if((a[0].get_type() != sexpr_type::list_type) &&
+	   (a[1].get_type() != sexpr_type::list_type)) {
+		tmp.push_back(a[0]);
+		tmp.push_back(a[1]);
+	}else if((a[0].get_type() != sexpr_type::list_type) &&
+	         (a[1].get_type() == sexpr_type::list_type)) {
+		tmp.push_back(a[0]);
+		auto lst = a[1].get<std::vector<sexpr>>();
+		for(auto &iter : lst){
+			tmp.push_back(iter);
+		}
+	} else if((a[0].get_type() == sexpr_type::list_type) &&
+	          (a[1].get_type() != sexpr_type::list_type)) {
+		tmp.push_back(a[0]);
+		tmp.push_back(a[1]);
+	} else {
+	   tmp.push_back(a[0]);
+	   auto lst = a[1].get<std::vector<sexpr>>();
+	   for(auto &iter : lst){
+		   tmp.push_back(iter);
+	   }
+	}
+	return tmp;
+}
+
 sexpr nth(const std::vector<sexpr>& a)
 {
 	if(a.size() < 2)

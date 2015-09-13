@@ -23,6 +23,8 @@ sexpr atom(const std::vector<sexpr>& exprs);
 
 sexpr nth(const std::vector<sexpr>& a);
 
+sexpr cons(const std::vector<sexpr>& a);
+
 sexpr evals(const std::vector<sexpr>& a, environment* env);
 
 sexpr eval(const sexpr& a, environment* env);

@@ -13,6 +13,7 @@ environment::environment(environment* env):
 	{"nth",sexpr(sexpr::func_t(nth))},
 	{"eval",sexpr(sexpr::func_t(std::bind(evals,std::placeholders::_1,this)))},
 	{"ls",sexpr(sexpr::func_t(std::bind(ls,std::placeholders::_1,this)))},
+	{"cons",sexpr(sexpr::func_t(cons))},
 	{"import",sexpr(sexpr::func_t(std::bind(import,std::placeholders::_1,this)))},
 	{"imports",sexpr(sexpr::func_t(std::bind(imports,std::placeholders::_1,this)))},
 	{"atom",sexpr(sexpr::func_t(atom))}}
