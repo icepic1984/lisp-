@@ -118,11 +118,86 @@ BOOST_AUTO_TEST_CASE(compare_test)
 	expr = evals(parse(tokenize("(= nil (cdr (quote(10 20))))")),env.get());
 	BOOST_CHECK_EQUAL(expr.get<bool>(),false);
 
+	expr = evals(parse(tokenize("(= 1 2 3)")),env.get());
+	BOOST_CHECK_EQUAL(expr.get<bool>(),false) ;
+
+	expr = evals(parse(tokenize("(= 1 1 1)")),env.get());
+	BOOST_CHECK_EQUAL(expr.get<bool>(),true) ;
+
+	expr = evals(parse(tokenize("(> 3 4)")),env.get());
+	BOOST_CHECK_EQUAL(expr.get<bool>(),false) ;
+
+	expr = evals(parse(tokenize("(> 4 4)")),env.get());
+	BOOST_CHECK_EQUAL(expr.get<bool>(),false) ;
+
+	expr = evals(parse(tokenize("(> 4 3)")),env.get());
+	BOOST_CHECK_EQUAL(expr.get<bool>(),true) ;
+
+	expr = evals(parse(tokenize("(> 4 3 2)")),env.get());
+	BOOST_CHECK_EQUAL(expr.get<bool>(),true) ;
+
+	expr = evals(parse(tokenize("(> 4 3 5)")),env.get());
+	BOOST_CHECK_EQUAL(expr.get<bool>(),false) ;
+
+	expr = evals(parse(tokenize("(< 3 4)")),env.get());
+	BOOST_CHECK_EQUAL(expr.get<bool>(),true) ;
+
+	expr = evals(parse(tokenize("(< 4 4)")),env.get());
+	BOOST_CHECK_EQUAL(expr.get<bool>(),false) ;
+
+	expr = evals(parse(tokenize("(< 4 3)")),env.get());
+	BOOST_CHECK_EQUAL(expr.get<bool>(),false) ;
+
+	expr = evals(parse(tokenize("(< 3 2 1)")),env.get());
+	BOOST_CHECK_EQUAL(expr.get<bool>(),false) ;
+
+	expr = evals(parse(tokenize("(< 1 2 3)")),env.get());
+	BOOST_CHECK_EQUAL(expr.get<bool>(),true) ;
+
+	expr = evals(parse(tokenize("(< 1 2 0)")),env.get());
+	BOOST_CHECK_EQUAL(expr.get<bool>(),false) ;
+
+	expr = evals(parse(tokenize("(<= 1 2)")),env.get());
+	BOOST_CHECK_EQUAL(expr.get<bool>(),true) ;
+
+	expr = evals(parse(tokenize("(<= 2 2)")),env.get());
+	BOOST_CHECK_EQUAL(expr.get<bool>(),true) ;
+
+	expr = evals(parse(tokenize("(<= 3 2)")),env.get());
+	BOOST_CHECK_EQUAL(expr.get<bool>(),false) ;
+
+	expr = evals(parse(tokenize("(<= 1 2 3)")),env.get());
+	BOOST_CHECK_EQUAL(expr.get<bool>(),true) ;
+
+	expr = evals(parse(tokenize("(<= 1 2 2)")),env.get());
+	BOOST_CHECK_EQUAL(expr.get<bool>(),true) ;
+
+	expr = evals(parse(tokenize("(<= 1 2 1)")),env.get());
+	BOOST_CHECK_EQUAL(expr.get<bool>(),false) ;
+
+	expr = evals(parse(tokenize("(>= 2 1)")),env.get());
+	BOOST_CHECK_EQUAL(expr.get<bool>(),true) ;
+
+	expr = evals(parse(tokenize("(>= 2 2)")),env.get());
+	BOOST_CHECK_EQUAL(expr.get<bool>(),true) ;
+
+	expr = evals(parse(tokenize("(>= 2 3)")),env.get());
+	BOOST_CHECK_EQUAL(expr.get<bool>(),false) ;
+
+	expr = evals(parse(tokenize("(>= 3 2 1)")),env.get());
+	BOOST_CHECK_EQUAL(expr.get<bool>(),true) ;
+
+	expr = evals(parse(tokenize("(>= 2 1 1)")),env.get());
+	BOOST_CHECK_EQUAL(expr.get<bool>(),true) ;
+
+	expr = evals(parse(tokenize("(>= 2 1 2)")),env.get());
+	BOOST_CHECK_EQUAL(expr.get<bool>(),false) ;
 }
 
-// (cons 'a '(b c))
-// (cons '(a) '(b c))
-// (cons '(b c) 'a)
+BOOST_AUTO_TEST_CHECK(arithmetric_test)
+{
+	
+
 BOOST_AUTO_TEST_CASE(begin_test)
 {
 	auto env = std::make_unique<environment>();
@@ -131,12 +206,14 @@ BOOST_AUTO_TEST_CASE(begin_test)
 	buffer << expr;
 	BOOST_CHECK_EQUAL(buffer.str(), "b ");
 }
+
 BOOST_AUTO_TEST_CASE(define_test)
 {
 	auto env = std::make_unique<environment>();
 	auto expr = evals(parse(tokenize("(define x 100)")),env.get());
 	BOOST_CHECK_EQUAL(expr.get<int>(),100);
 }
+
 // https://stackoverflow.com/questions/526082/in-scheme-whats-the-point-of-set
 BOOST_AUTO_TEST_CASE(set_test)
 {
@@ -155,6 +232,12 @@ BOOST_AUTO_TEST_CASE(set_test)
 	BOOST_CHECK_EQUAL(expr.get<int>(),4);
 }
 
+BOOST_AUTO_TEST_CASE(cond)
+{
+	// auto env = std::make_unique<environment>();
+	// auto expr = evals(parse(tokenize("(cond ((> 3 2) 'greater) \
+    //                                         ((< 3 2) 'less))")),env.get());
+}
 	
 BOOST_AUTO_TEST_CASE(lexicalscope_test)
 {
