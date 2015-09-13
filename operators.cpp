@@ -48,6 +48,13 @@ eval_helper::result_t eval_helper::operator() (const std::vector<sexpr>& l,envir
 		return tmp;
 	}
 
+	if(l.front() == sexpr("begin")){
+		for(auto iter = l.begin()+1; iter != l.end()-1; ++iter){
+			visit(*iter,eval_helper{},env);
+		}
+		return visit(l.back(),eval_helper{},env);
+	}
+
 	auto proc = visit(l.front(),eval_helper {},env);
 	std::vector<sexpr> exprs;
 	for(auto iter = l.begin()+1; iter != l.end();
