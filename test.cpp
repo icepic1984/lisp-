@@ -131,6 +131,12 @@ BOOST_AUTO_TEST_CASE(begin_test)
 	buffer << expr;
 	BOOST_CHECK_EQUAL(buffer.str(), "b ");
 }
+BOOST_AUTO_TEST_CASE(define_test)
+{
+	auto env = std::make_unique<environment>();
+	auto expr = evals(parse(tokenize("(define x 100)")),env.get());
+	BOOST_CHECK_EQUAL(expr.get<int>(),100);
+}
 BOOST_AUTO_TEST_CASE(lexicalscope_test)
 {
 	auto env = std::make_unique<environment>();
