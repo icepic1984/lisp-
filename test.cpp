@@ -51,6 +51,29 @@ BOOST_AUTO_TEST_CASE(cons_test)
 }
 
 
+BOOST_AUTO_TEST_CASE(cdr_test)
+{
+	// (cdr '((a) b c d)) => (b c d)
+	auto env = std::make_unique<environment>();
+	auto expr = evals(parse(tokenize("(cdr(quote((a) b c d)))")),env.get());
+	std::stringstream buffer;
+	buffer << expr;
+	BOOST_CHECK_EQUAL(buffer.str(),"( b c d ) ");
+
+	//(cdr '(( 1 2))) => (2) NOTE: no cons cell support
+	expr = evals(parse(tokenize("(cdr (quote( 1 2)))")),env.get());
+	buffer.str(std::string());
+	buffer.clear();
+	buffer << expr;
+	BOOST_CHECK_EQUAL(buffer.str(),"( 2 ) ");
+
+	//(cdr '()) => nil 
+	expr = evals(parse(tokenize("(cdr (quote()))")),env.get());
+	buffer.str(std::string());
+	buffer.clear();
+	buffer << expr;
+	BOOST_CHECK_EQUAL(buffer.str(),"<nil>");
+}
 
 // (cons 'a '(b c))
 // (cons '(a) '(b c))
