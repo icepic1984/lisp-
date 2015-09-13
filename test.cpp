@@ -106,6 +106,12 @@ BOOST_AUTO_TEST_CASE(compare_test)
 	auto expr = evals(parse(tokenize("(= nil nil)")),env.get());
 	BOOST_CHECK_EQUAL(expr.get<bool>(),true);
 
+	expr = evals(parse(tokenize("(= \"aa\" \"aa\")")),env.get());
+	BOOST_CHECK_EQUAL(expr.get<bool>(),true);
+
+	expr = evals(parse(tokenize("(= \"aa\" \"a\")")),env.get());
+	BOOST_CHECK_EQUAL(expr.get<bool>(),false);
+	
 	expr = evals(parse(tokenize("(= t t)")),env.get());
 	BOOST_CHECK_EQUAL(expr.get<bool>(),true);
 
