@@ -254,9 +254,26 @@ BOOST_AUTO_TEST_CASE(set_test)
 
 BOOST_AUTO_TEST_CASE(cond)
 {
-	// auto env = std::make_unique<environment>();
-	// auto expr = evals(parse(tokenize("(cond ((> 3 2) 'greater) \
-    //                                         ((< 3 2) 'less))")),env.get());
+	 auto env = std::make_unique<environment>();
+	 auto expr = evals(parse(tokenize("(cond ((> 3 2) (quote greater)) \
+                                             ((< 3 2) (quote less)))")),env.get());
+	 std::stringstream buffer;
+	 buffer << expr;
+	 BOOST_CHECK_EQUAL(buffer.str(),"greater ");
+
+	 expr = evals(parse(tokenize("(cond ((< 3 2) (quote less)) \
+                                        ((> 3 2) (quote greater)))")),env.get());
+	 buffer.str(std::string());
+	 buffer.clear();
+	 buffer << expr;
+	 BOOST_CHECK_EQUAL(buffer.str(),"greater ");
+
+	 expr = evals(parse(tokenize("(cond (f 1) \
+                                 (f 2) \
+                                 (f 3) \
+                                 (t 4) \
+                                 (f 5))")),env.get());
+	 BOOST_CHECK_EQUAL(expr.get<int>(),4);
 }
 	
 BOOST_AUTO_TEST_CASE(lexicalscope_test)
