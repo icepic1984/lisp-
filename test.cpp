@@ -137,6 +137,25 @@ BOOST_AUTO_TEST_CASE(define_test)
 	auto expr = evals(parse(tokenize("(define x 100)")),env.get());
 	BOOST_CHECK_EQUAL(expr.get<int>(),100);
 }
+// https://stackoverflow.com/questions/526082/in-scheme-whats-the-point-of-set
+BOOST_AUTO_TEST_CASE(set_test)
+{
+	auto env = std::make_unique<environment>();
+	auto expr = evals(parse(tokenize("(define x 100)")),env.get());
+	BOOST_CHECK_EQUAL(expr.get<int>(),100);
+	expr = evals(parse(tokenize("(define foo (lambda () (define x 120) x))")),env.get());
+	expr = evals(parse(tokenize("(foo)")),env.get());
+	BOOST_CHECK_EQUAL(expr.get<int>(),120);
+	expr = evals(parse(tokenize("(define bar (lambda () (set x 4) x))")),env.get());
+	expr = evals(parse(tokenize("x")),env.get());
+	BOOST_CHECK_EQUAL(expr.get<int>(),100);
+	expr = evals(parse(tokenize("(bar)")),env.get());
+	BOOST_CHECK_EQUAL(expr.get<int>(),4);
+	expr = evals(parse(tokenize("x")),env.get());
+	BOOST_CHECK_EQUAL(expr.get<int>(),4);
+}
+
+	
 BOOST_AUTO_TEST_CASE(lexicalscope_test)
 {
 	auto env = std::make_unique<environment>();
