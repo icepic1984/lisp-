@@ -172,4 +172,26 @@ BOOST_AUTO_TEST_CASE(lexicalscope_test)
 	BOOST_CHECK_EQUAL(expr.get<int>(),3);
 	expr = evals(parse(tokenize("(count-4)")),env.get());
 	BOOST_CHECK_EQUAL(expr.get<int>(),2);
+
+
+	evals(parse(tokenize("(define set-hidden 0)")),env.get());
+	evals(parse(tokenize("(define get-hidden 0)")),env.get());
+	evals(parse(tokenize("((lambda () (begin (define hidden 0)\
+                                      (set set-hidden (lambda (n) (set hidden n)))\
+                                      (set get-hidden (lambda () hidden)))))")),env.get());
+
+	expr = evals(parse(tokenize("(get-hidden)")),env.get());
+	BOOST_CHECK_EQUAL(expr.get<int>(),0);
+	evals(parse(tokenize("(set-hidden 100)")),env.get());
+	expr = evals(parse(tokenize("(get-hidden)")),env.get());
+	BOOST_CHECK_EQUAL(expr.get<int>(),100);
+	BOOST_CHECK_THROW(evals(parse(tokenize("hidden")),env.get()),
+	                  std::invalid_argument);
 }
+
+
+
+
+
+
+
