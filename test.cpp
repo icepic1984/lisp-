@@ -28,21 +28,21 @@ BOOST_AUTO_TEST_CASE(cons_test)
 	buffer << expr;
 	BOOST_CHECK_EQUAL(buffer.str(),"( ( a ) b c d ) ");
 
-	// (cons "a" '(b c))
+	// (cons "a" '(b c)) => ("a" b c)
 	expr = evals(parse(tokenize("(cons \"a\"  (quote(b c))) ")),env.get());
 	buffer.str(std::string());
 	buffer.clear();
 	buffer << expr;
 	BOOST_CHECK_EQUAL(buffer.str(),"( \"a\" b c ) ");
 
-	// (cons 'a 3)
+	// (cons 'a 3) => (a 3)
 	expr = evals(parse(tokenize("(cons (quote a) 3)")),env.get());
 	buffer.str(std::string());
 	buffer.clear();
 	buffer << expr;
 	BOOST_CHECK_EQUAL(buffer.str(),"( a 3 ) ");
 
-	// (cons '(a b) 'c)
+	// (cons '(a b) 'c) => ( ( a b ) c)
 	expr = evals(parse(tokenize("(cons (quote(a b)) (quote c))")),env.get());
 	buffer.str(std::string());
 	buffer.clear();
