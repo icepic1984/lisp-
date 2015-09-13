@@ -97,7 +97,6 @@ BOOST_AUTO_TEST_CASE(car_test)
 	buffer.clear();
 	buffer << expr;
 	BOOST_CHECK_EQUAL(buffer.str(),"( a b ) ");
-
 }
 
 BOOST_AUTO_TEST_CASE(compare_test)
@@ -202,7 +201,6 @@ BOOST_AUTO_TEST_CASE(compare_test)
 
 BOOST_AUTO_TEST_CASE(arithmetric_test)
 {
-
 	auto env = std::make_unique<environment>();
 	auto expr = evals(parse(tokenize("(+ 3 2 10)")),env.get());
 	BOOST_CHECK_EQUAL(expr.get<int>(),15);
@@ -216,7 +214,6 @@ BOOST_AUTO_TEST_CASE(arithmetric_test)
 	expr = evals(parse(tokenize("(/ 100 10 2)")),env.get());
 	BOOST_CHECK_EQUAL(expr.get<int>(),5);
 }
-
 
 BOOST_AUTO_TEST_CASE(begin_test)
 {
@@ -324,8 +321,6 @@ BOOST_AUTO_TEST_CASE(lexicalscope_test)
 	BOOST_CHECK_THROW(evals(parse(tokenize("hidden")),env.get()),
 	                  std::invalid_argument);
 }
-
-
 
 
 
