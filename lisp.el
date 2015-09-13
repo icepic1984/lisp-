@@ -1,22 +1,29 @@
-;; Test define
-(define x 10)
+;; Helper to calculate length of list x
+(define length-helper
+  (lambda (x accu)
+	(cond ((= nil x) accu)
+		  (t (length-helper (cdr x) (+ 1 accu))))))
 
-;; Test basic lambda
-(define plus (lambda (x y) (+ x y)))
+;; Returns length of list x
+(define length
+  (lambda (x)
+	(length-helper x 0)))
+				 
+(define range
+  (lambda (beg end)
+	(cond ((>= beg end) end)
+		  (t (cons beg (range (+ 1 beg) end))))))
 
-;; Test basic recursion
-(define countdown
-  (lambda (n)
-	(cond ((= n 0) n)
-		  (t (countdown(- n 1))))))
+(define reverse-helper
+	(lambda (list acc)
+	  (cond ((= nil list) acc)
+			(t (reverse-helper (cdr list) (cons (car list) acc))))))
 
-;; Test lambda capture
-(define count (lambda (n) (lambda () (set n (- n 1)))))
-(define count-3 (count 3)) 
-(define count-4 (count 4))
- 
+(define reverse (lambda (list)
+  (reverse-helper list nil)))
 
 
 
-
+;; Test length				
+(length (range 15 20))
 
