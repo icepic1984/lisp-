@@ -75,6 +75,30 @@ BOOST_AUTO_TEST_CASE(cdr_test)
 	BOOST_CHECK_EQUAL(buffer.str(),"<nil>");
 }
 
+BOOST_AUTO_TEST_CASE(car_test)
+{
+	// (car '(a b c)) => a 
+	auto env = std::make_unique<environment>();
+	auto expr = evals(parse(tokenize("(car(quote(a b c d)))")),env.get());
+	std::stringstream buffer;
+	buffer << expr;
+	BOOST_CHECK_EQUAL(buffer.str(),"a ");
+
+	//(car '()) => <nil> 
+	expr = evals(parse(tokenize("(car (quote()))")),env.get());
+	buffer.str(std::string());
+	buffer.clear();
+	buffer << expr;
+	BOOST_CHECK_EQUAL(buffer.str(),"<nil>");
+
+	//(car '((a b) c)) => (a b)
+	expr = evals(parse(tokenize("(car (quote((a b) c)))")),env.get());
+	buffer.str(std::string());
+	buffer.clear();
+	buffer << expr;
+	BOOST_CHECK_EQUAL(buffer.str(),"( a b ) ");
+
+}
 // (cons 'a '(b c))
 // (cons '(a) '(b c))
 // (cons '(b c) 'a)
