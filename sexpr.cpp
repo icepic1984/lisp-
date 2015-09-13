@@ -225,13 +225,13 @@ sexpr operator <(const sexpr& a, const sexpr& b)
 {return sexpr(visit(a,b,sexpr_is_less {}));}
 
 sexpr operator >(const sexpr& a, const sexpr& b)
-{return sexpr(visit(b,a,sexpr_is_less {}));}
+{return sexpr(visit(a,b,sexpr_is_greater {}));}
 
 sexpr operator <=(const sexpr& a, const sexpr& b)
 {return sexpr(visit(a,b,sexpr_is_less_equal {}));}
 
 sexpr operator >=(const sexpr& a, const sexpr& b)
-{return sexpr(visit(b,a,sexpr_is_less_equal {}));}
+{return sexpr(visit(a,b,sexpr_is_greater_equal {}));}
 
 sexpr operator!=(const sexpr&a, const sexpr& b)
 {return sexpr(visit(a,b,sexpr_not_equal{}));}

@@ -1,9 +1,14 @@
 #include <utility>
 #include "environment.hpp"
 #include "lisp.hpp"
+
 environment::environment(environment* env):
 	outer(env), symbols{
 	{"+", sexpr(sexpr::func_t(add))},
+	{">", sexpr(sexpr::func_t(greater))},
+	{"<", sexpr(sexpr::func_t(less))},
+	{"<=",sexpr(sexpr::func_t(less_equal))},
+	{">=",sexpr(sexpr::func_t(greater_equal))},
 	{"/", sexpr(sexpr::func_t(divs))},
 	{"*", sexpr(sexpr::func_t(mul))},
 	{"-", sexpr(sexpr::func_t(sub))},

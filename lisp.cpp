@@ -68,6 +68,63 @@ sexpr equal(const std::vector<sexpr>& exprs)
 	    ++iter){
 		if(init != *iter)
 		   return sexpr(false);
+		init = *iter;
+	}
+	return sexpr(true);
+}
+
+sexpr less(const std::vector<sexpr>& exprs)
+{
+	if(exprs.size() < 1)
+	   throw std::invalid_argument("<equal>: Wrong number of arguments");
+	sexpr init(exprs.front());
+	for(auto iter = exprs.begin()+1; iter != exprs.end();
+	    ++iter){
+		if(init >= *iter)
+		   return sexpr(false);
+		init = *iter;
+	}
+	return sexpr(true);
+}
+
+sexpr greater(const std::vector<sexpr>& exprs)
+{
+	if(exprs.size() < 1)
+	   throw std::invalid_argument("<equal>: Wrong number of arguments");
+	sexpr init(exprs.front());
+	for(auto iter = exprs.begin()+1; iter != exprs.end();
+	    ++iter){
+		if(init <= *iter)
+		   return sexpr(false);
+		init = *iter;
+	}
+	return sexpr(true);
+}
+
+sexpr greater_equal(const std::vector<sexpr>& exprs)
+{
+	if(exprs.size() < 1)
+	   throw std::invalid_argument("<equal>: Wrong number of arguments");
+	sexpr init(exprs.front());
+	for(auto iter = exprs.begin()+1; iter != exprs.end();
+	    ++iter){
+		if(init < *iter)
+		   return sexpr(false);
+		init = *iter;
+	}
+	return sexpr(true);
+}
+
+sexpr less_equal(const std::vector<sexpr>& exprs)
+{
+	if(exprs.size() < 1)
+	   throw std::invalid_argument("<equal>: Wrong number of arguments");
+	sexpr init(exprs.front());
+	for(auto iter = exprs.begin()+1; iter != exprs.end();
+	    ++iter){
+		if(init > *iter)
+		   return sexpr(false);
+		init = *iter;
 	}
 	return sexpr(true);
 }

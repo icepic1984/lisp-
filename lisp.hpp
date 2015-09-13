@@ -19,6 +19,14 @@ sexpr sub(const std::vector<sexpr>& exprs);
 
 sexpr equal(const std::vector<sexpr>& exprs);
 
+sexpr less(const std::vector<sexpr>& exprs);
+
+sexpr greater(const std::vector<sexpr>& exprs);
+
+sexpr greater_equal(const std::vector<sexpr>& exprs);
+
+sexpr less_equal(const std::vector<sexpr>& exprs);
+
 sexpr atom(const std::vector<sexpr>& exprs);
 
 sexpr nth(const std::vector<sexpr>& a);
