@@ -11,7 +11,7 @@
 BOOST_AUTO_TEST_CASE(cons_test)
 {
 	// (cons 'a '()) => (a)
-	auto env = std::make_unique<environment>();
+	auto env = std::make_shared<environment>();
 	auto expr = evals(parse(tokenize("(cons (quote a) (quote()))")),env.get());
 	auto l = expr.get<std::vector<sexpr>>();
 	BOOST_CHECK_EQUAL(l.size(),1);
@@ -54,7 +54,7 @@ BOOST_AUTO_TEST_CASE(cons_test)
 BOOST_AUTO_TEST_CASE(cdr_test)
 {
 	// (cdr '((a) b c d)) => (b c d)
-	auto env = std::make_unique<environment>();
+	auto env = std::make_shared<environment>();
 	auto expr = evals(parse(tokenize("(cdr(quote((a) b c d)))")),env.get());
 	std::stringstream buffer;
 	buffer << expr;
@@ -78,7 +78,7 @@ BOOST_AUTO_TEST_CASE(cdr_test)
 BOOST_AUTO_TEST_CASE(car_test)
 {
 	// (car '(a b c)) => a 
-	auto env = std::make_unique<environment>();
+	auto env = std::make_shared<environment>();
 	auto expr = evals(parse(tokenize("(car(quote(a b c d)))")),env.get());
 	std::stringstream buffer;
 	buffer << expr;
@@ -101,7 +101,7 @@ BOOST_AUTO_TEST_CASE(car_test)
 
 BOOST_AUTO_TEST_CASE(compare_test)
 {
-	auto env = std::make_unique<environment>();
+	auto env = std::make_shared<environment>();
 	auto expr = evals(parse(tokenize("(= nil nil)")),env.get());
 	BOOST_CHECK_EQUAL(expr.get<bool>(),true);
 
@@ -201,7 +201,7 @@ BOOST_AUTO_TEST_CASE(compare_test)
 
 BOOST_AUTO_TEST_CASE(arithmetric_test)
 {
-	auto env = std::make_unique<environment>();
+	auto env = std::make_shared<environment>();
 	auto expr = evals(parse(tokenize("(+ 3 2 10)")),env.get());
 	BOOST_CHECK_EQUAL(expr.get<int>(),15);
 
@@ -217,7 +217,7 @@ BOOST_AUTO_TEST_CASE(arithmetric_test)
 
 BOOST_AUTO_TEST_CASE(begin_test)
 {
-	auto env = std::make_unique<environment>();
+	auto env = std::make_shared<environment>();
 	auto expr = evals(parse(tokenize("(begin (quote a) (quote b))")),env.get());
 	std::stringstream buffer;
 	buffer << expr;
@@ -226,15 +226,15 @@ BOOST_AUTO_TEST_CASE(begin_test)
 
 BOOST_AUTO_TEST_CASE(define_test)
 {
-	auto env = std::make_unique<environment>();
+	auto env = std::make_shared<environment>() ;
 	auto expr = evals(parse(tokenize("(define x 100)")),env.get());
 	BOOST_CHECK_EQUAL(expr.get<int>(),100);
 }
 
-// https://stackoverflow.com/questions/526082/in-scheme-whats-the-point-of-set
+// //https://stackoverflow.com/questions/526082/in-scheme-whats-the-point-of-set
 BOOST_AUTO_TEST_CASE(set_test)
 {
-	auto env = std::make_unique<environment>();
+	auto env = std::make_shared<environment>() ;
 	auto expr = evals(parse(tokenize("(define x 100)")),env.get());
 	BOOST_CHECK_EQUAL(expr.get<int>(),100);
 	expr = evals(parse(tokenize("(define foo (lambda () (define x 120) x))")),env.get());
@@ -251,31 +251,31 @@ BOOST_AUTO_TEST_CASE(set_test)
 
 BOOST_AUTO_TEST_CASE(cond)
 {
-	 auto env = std::make_unique<environment>();
-	 auto expr = evals(parse(tokenize("(cond ((> 3 2) (quote greater)) \
+	auto env = std::make_shared<environment>();
+	auto expr = evals(parse(tokenize("(cond ((> 3 2) (quote greater)) \
                                              ((< 3 2) (quote less)))")),env.get());
-	 std::stringstream buffer;
-	 buffer << expr;
-	 BOOST_CHECK_EQUAL(buffer.str(),"greater ");
+	std::stringstream buffer;
+	buffer << expr;
+	BOOST_CHECK_EQUAL(buffer.str(),"greater ");
 
-	 expr = evals(parse(tokenize("(cond ((< 3 2) (quote less)) \
+	expr = evals(parse(tokenize("(cond ((< 3 2) (quote less)) \
                                         ((> 3 2) (quote greater)))")),env.get());
-	 buffer.str(std::string());
-	 buffer.clear();
-	 buffer << expr;
-	 BOOST_CHECK_EQUAL(buffer.str(),"greater ");
+	buffer.str(std::string());
+	buffer.clear();
+	buffer << expr;
+	BOOST_CHECK_EQUAL(buffer.str(),"greater ");
 
-	 expr = evals(parse(tokenize("(cond (f 1) \
+	expr = evals(parse(tokenize("(cond (f 1) \
                                  (f 2) \
                                  (f 3) \
                                  (t 4) \
                                  (f 5))")),env.get());
-	 BOOST_CHECK_EQUAL(expr.get<int>(),4);
+	BOOST_CHECK_EQUAL(expr.get<int>(),4);
 }
 	
 BOOST_AUTO_TEST_CASE(lambda_test)
 {
-	auto env = std::make_unique<environment>();
+	auto env = std::make_shared<environment>();
 	auto expr = evals(parse(tokenize("(define plus (lambda (x y) (+ x y)))")),
 	                  env.get());
 	expr = evals(parse(tokenize("(plus 20 20)")), env.get());
@@ -291,25 +291,23 @@ BOOST_AUTO_TEST_CASE(lambda_test)
 
 BOOST_AUTO_TEST_CASE(lexicalscope_test)
 {
-	auto env = std::make_unique<environment>();
+	auto env = std::make_shared<environment>();
 	auto expr = evals(parse(tokenize("(define count (lambda (n) (lambda () (set n (- n 1)))))")),env.get());
-	evals(parse(tokenize("(define count-3 (count 3))")),env.get());
-	evals(parse(tokenize("(define count-4 (count 4))")),env.get());
-
+	auto a = evals(parse(tokenize("(define count-3 (count 3))")),env.get());
+	auto b = evals(parse(tokenize("(define count-4 (count 4))")),env.get());
 	expr = evals(parse(tokenize("(count-3)")),env.get());
 	BOOST_CHECK_EQUAL(expr.get<int>(),2);
 	expr = evals(parse(tokenize("(count-3)")),env.get());
 	BOOST_CHECK_EQUAL(expr.get<int>(),1);
-	
 	expr = evals(parse(tokenize("(count-4)")),env.get());
 	BOOST_CHECK_EQUAL(expr.get<int>(),3);
 	expr = evals(parse(tokenize("(count-4)")),env.get());
 	BOOST_CHECK_EQUAL(expr.get<int>(),2);
 
 
-	evals(parse(tokenize("(define set-hidden 0)")),env.get());
-	evals(parse(tokenize("(define get-hidden 0)")),env.get());
-	evals(parse(tokenize("((lambda () (begin (define hidden 0)\
+	expr = evals(parse(tokenize("(define set-hidden 0)")),env.get());
+	expr = evals(parse(tokenize("(define get-hidden 0)")),env.get());
+	expr = evals(parse(tokenize("((lambda () (begin (define hidden 0)\
                                       (set set-hidden (lambda (n) (set hidden n)))\
                                       (set get-hidden (lambda () hidden)))))")),env.get());
 
@@ -320,7 +318,19 @@ BOOST_AUTO_TEST_CASE(lexicalscope_test)
 	BOOST_CHECK_EQUAL(expr.get<int>(),100);
 	BOOST_CHECK_THROW(evals(parse(tokenize("hidden")),env.get()),
 	                  std::invalid_argument);
+
+	expr = evals(parse(tokenize("(define make-account \
+                                     (lambda (balance) \
+                                    	(lambda (amt)  \
+                                     	  (begin \
+	                                        (set balance (+ balance amt))\
+                                             balance))))")),env.get());
+	expr = evals(parse(tokenize("(define account (make-account 100))")),env.get());
+	expr = evals(parse(tokenize("(account -20)")),env.get());
+	BOOST_CHECK_EQUAL(expr.get<int>(),80);
+
 }
+
 
 
 

@@ -25,7 +25,8 @@ struct sexpr_type
 };
 
 class environment;
-//using environment_ptr = std::shared_ptr<environment>;
+using environment_ptr = std::shared_ptr<environment>;
+using environment_weak = std::weak_ptr<environment>;
 
 class sexpr 
 {
@@ -91,16 +92,16 @@ public:
 
    void set_type(sexpr_type::info type);
 
-   environment* get_env();
+   environment_ptr get_env();
 
-   void set_env(environment* e);
+   void set_env(environment_ptr e);
 
    template <typename T>
    T get() const;
    
 private:
    int type_field;
-   environment* env;
+   environment_ptr env;
    
    union 
    {

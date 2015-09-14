@@ -10,14 +10,14 @@
 #include <memory>
 #include "environment.hpp"
 
-void repl(const std::string & prompt, environment * env)
+void repl(const std::string & prompt, const environment_ptr&  env)
 {
     for (;;) {
         std::cout << prompt;
         std::string line;
         std::getline(std::cin, line);
         try {
-	        std::cout << evals(parse(tokenize(line)), env) << '\n';
+	        std::cout << evals(parse(tokenize(line)), env.get()) << '\n';
         } catch (std::invalid_argument& e){
 	        std::cout << e.what() << std::endl;
         }
@@ -30,8 +30,7 @@ int main()
 
 	// auto t = tokenize("(define countdown (lambda (n) (cond ((= n 0) n) (t (countdown(- n 1))))))(countdown 10)");
 
-	auto env = std::make_unique<environment>();
-
+	auto env = std::make_shared<environment>();
 	 // auto t = tokenize("(define count (lambda (n) (lambda () (set n (- n 1)))))\
      //                     (define count-3 (count 3)) \
      //                     (define count-4 (count 4)) \
@@ -46,7 +45,7 @@ int main()
 	// auto s = parse(t);
 	// std::cout<<evals(s,env.get())<<std::endl;
 	// std::cout << *env << std::endl;
-	repl("LISP> ",env.get());
+	repl("LISP> ",env);
 	
 	
 	// using boost::spirit::utree;
