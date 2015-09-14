@@ -22,7 +22,7 @@
 (define reverse (lambda (list)
   (reverse-helper list nil)))
 
-
+(cons nil(cons 2 (cons 3 (cons 4 4))))
 
 ;; Test length				
 (length (range 15 20))
