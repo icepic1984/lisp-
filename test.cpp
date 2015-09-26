@@ -321,9 +321,9 @@ BOOST_AUTO_TEST_CASE(lexicalscope_test)
 
 	expr = evals(parse(tokenize("(define make-account \
                                      (lambda (balance) \
-                                    	(lambda (amt)  \
-                                     	  (begin \
-	                                        (set balance (+ balance amt))\
+                                       (lambda (amt)  \
+                                         (begin \
+                                           (set balance (+ balance amt))\
                                              balance))))")),env.get());
 	expr = evals(parse(tokenize("(define account (make-account 100))")),env.get());
 	expr = evals(parse(tokenize("(account -20)")),env.get());

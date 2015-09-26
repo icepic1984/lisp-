@@ -16,7 +16,7 @@ expressions_t parse(const tokens_t& tokens);
 sexpr atom(const std::string& str);
 
 template <typename Iter>
-std::pair<sexpr,Iter> parse_helper(Iter begin, Iter end);
+std::pair<sexpr, Iter> parse_helper(Iter begin, Iter end);
 
 #include "parser.inl"
 

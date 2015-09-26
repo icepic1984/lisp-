@@ -4,7 +4,7 @@
 
 bool is_special(char c)
 {
-	if(c == '('){
+	if (c == '(') {
 		return true;
 	} else if (c == ')') {
 		return true;
@@ -19,25 +19,24 @@ tokens_t tokenize(const std::string& str)
 {
 	tokens_t tokens;
 	auto start = str.begin();
-	while(start != str.end()){
-		if(std::isspace(*start)){
+	while (start != str.end()) {
+		if (std::isspace(*start)) {
 			++start;
 			continue;
 		} else if (is_special(*start)) {
-			tokens.push_back(std::string(1,*start));
+			tokens.push_back(std::string(1, *start));
 		} else {
 			std::string tmp;
-			while((start != str.end()) &&
-			      !(is_special(*start)) &&
-			      !(std::isspace(*start))){
-			   tmp += *start;
-			   ++start;
+			while ((start != str.end()) && !(is_special(*start)) &&
+			       !(std::isspace(*start))) {
+				tmp += *start;
+				++start;
 			}
 			tokens.push_back(tmp);
 			--start;
 		}
 		++start;
-	}	
+	}
 	return tokens;
 }
 
@@ -46,8 +45,8 @@ expressions_t parse(const tokens_t& tokens)
 	expressions_t expressions;
 	auto start = tokens.begin();
 	auto end = tokens.end();
-	while(start != tokens.end()){
-		auto result = parse_helper(start,end);
+	while (start != tokens.end()) {
+		auto result = parse_helper(start, end);
 		expressions.push_back(result.first);
 		start = result.second;
 	}
@@ -58,29 +57,22 @@ sexpr atom(const std::string& str)
 {
 	std::regex floating_point("[+-]?[0-9]*\\.[0-9]+([eE][-+]?[0-9]+)?",
 	                          std::regex::extended);
-	std::regex integer("[-+]?[0-9]+",std::regex::extended);
+	std::regex integer("[-+]?[0-9]+", std::regex::extended);
 	std::regex stringtype("\"(.*?)\"");
 	std::smatch match;
 
-
-	
-	if(str == "nil"){
+	if (str == "nil") {
 		return sexpr(sexpr::nil_type{});
 	} else if (str == "t") {
 		return sexpr(true);
 	} else if (str == "f") {
 		return sexpr(false);
-	} else if (std::regex_match(str,floating_point)) {
+	} else if (std::regex_match(str, floating_point)) {
 		return sexpr(stod(str));
-	} else if (std::regex_match(str,integer)) {
-	 	return sexpr(stoi(str));
-	} else if (std::regex_match(str,match,stringtype)) {
+	} else if (std::regex_match(str, integer)) {
+		return sexpr(stoi(str));
+	} else if (std::regex_match(str, match, stringtype)) {
 		return sexpr(lisp_string(match[1].str().c_str()));
 	}
 	return sexpr(str);
 }
-
-
-
-	
-
