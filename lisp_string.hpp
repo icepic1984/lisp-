@@ -3,9 +3,8 @@
 
 #include <string>
 
-class lisp_string : public std::string 
-{
-   using std::string::string;
+class lisp_string : public std::string {
+	using std::string::string;
 };
 
-#endif 
+#endif

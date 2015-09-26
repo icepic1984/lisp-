@@ -147,21 +147,18 @@ sexpr cons(const std::vector<sexpr>& a)
 	    (a[1].get_type() != sexpr_type::list_type)) {
 		tmp.push_back(a[0]);
 		tmp.push_back(a[1]);
-	}
-	else if ((a[0].get_type() != sexpr_type::list_type) &&
+	} else if ((a[0].get_type() != sexpr_type::list_type) &&
 	         (a[1].get_type() == sexpr_type::list_type)) {
 		tmp.push_back(a[0]);
 		auto lst = a[1].get<std::vector<sexpr>>();
 		for (auto& iter : lst) {
 			tmp.push_back(iter);
 		}
-	}
-	else if ((a[0].get_type() == sexpr_type::list_type) &&
+	} else if ((a[0].get_type() == sexpr_type::list_type) &&
 	         (a[1].get_type() != sexpr_type::list_type)) {
 		tmp.push_back(a[0]);
 		tmp.push_back(a[1]);
-	}
-	else {
+	} else {
 		tmp.push_back(a[0]);
 		auto lst = a[1].get<std::vector<sexpr>>();
 		for (auto& iter : lst) {
